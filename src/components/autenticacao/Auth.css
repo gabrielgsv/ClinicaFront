@@ -1,0 +1,79 @@
+div.wallpaper {
+  background-color: #f8f8f8;
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  z-index: -1;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: 85% 50%;
+  filter: blur(3px);
+}
+
+div.telaLogin {
+  width: 360px;
+  top: 42%; /* IMPORTANT */
+  left: 50%; /* IMPORTANT */
+  display: block;
+  position: absolute;
+  margin-top: -208.5px; /* HALF OF THE HEIGHT */
+  margin-left: -100px;
+}
+
+div.telaRegistro {
+  width: 360x;
+  top: 33%; /* IMPORTANT */
+  left: 50%; /* IMPORTANT */
+  display: block;
+  position: absolute;
+  margin-top: -208.5px; /* HALF OF THE HEIGHT */
+  margin-left: -100px;
+}
+
+.boxLogin {
+  text-align: center;
+  width: 200%;
+  right: 40px;
+}
+
+.boxRegistro {
+  text-align: center;
+  width: 127%;
+  right: 40px;
+}
+
+img.imagemTelaInicio {
+  width: 122px;
+  margin-left: 34px;
+}
+
+.headerLogin {
+  font-size: 20px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #1890ff;
+  text-align: center;
+}
+
+.login {
+  background-color: gray;
+  background: #fff;
+  -webkit-box-shadow: 0 1px 2px 0 rgba(34, 36, 38, 0.15);
+  box-shadow: 0 0 100px rgba(0, 0, 0, 0.08);
+  margin: 1rem 0;
+  padding: 1em 1em;
+}
+
+.btn-custom {
+  width: 150px;
+}
+
+button.btn-custom:disabled {
+  background-color: #ffffff !important;
+  color: #d1d1d1 !important;
+  border: 1px solid #d1d1d1 !important;
+}
+
+FormItem.form-button-custom {
+  margin-left: 0.333% !important;
+}
