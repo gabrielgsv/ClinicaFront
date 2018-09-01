@@ -30,8 +30,12 @@ class CardMedico extends Component {
     loading: false,
     estadoModalVer: false,
     estadoModalAlterar: false,
+    nomebutton: "Buscar",
     nomedigitado: {
       nome: ""
+    },
+    medico: {
+      especializacao: ""
     },
     medicos: [],
     medicoSelecionado: [],
@@ -46,38 +50,38 @@ class CardMedico extends Component {
   //   });
   // };
 
-  medicoBuscando = () => {
-    axios
-      .post(`/api/buscarmedico`, this.state.nomedigitado)
-      .then(response => {
-        if (response.data.length === 0) {
-          notification.open({
-            message: "Localizar Médico",
-            description: "Não existe este médico :(",
-            icon: <Icon type="meh-o" style={{ color: "red" }} />
-          });
-          this.setState({
-            nomedigitado: {
-              nome: ""
-            },
-            medicosBuscados: response.data
-          });
-          return;
-        }
-        this.setState({
-          medicosBuscados: response.data,
-          loading: true
-        });
-        setTimeout(() => {
-          this.setState({
-            loading: false
-          });
-        }, 1000);
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
+  // medicoBuscando = () => {
+  //   axios
+  //     .post(`/api/buscarmedico`, this.state.nomedigitado)
+  //     .then(response => {
+  //       if (response.data.length === 0) {
+  //         notification.open({
+  //           message: "Localizar Médico",
+  //           description: "Não existe este médico :(",
+  //           icon: <Icon type="meh-o" style={{ color: "red" }} />
+  //         });
+  //         this.setState({
+  //           nomedigitado: {
+  //             nome: ""
+  //           },
+  //           medicosBuscados: response.data
+  //         });
+  //         return;
+  //       }
+  //       this.setState({
+  //         medicosBuscados: response.data,
+  //         loading: true
+  //       });
+  //       setTimeout(() => {
+  //         this.setState({
+  //           loading: false
+  //         });
+  //       }, 1000);
+  //     })
+  //     .catch(err => {
+  //       console.log(err);
+  //     });
+  // };
 
   abrirModalEditar = key => {
     if (this.props.role === "p") {
@@ -152,6 +156,48 @@ class CardMedico extends Component {
         hospital: value
       }
     });
+  };
+
+  escolherEspecializacao = value => {
+    this.setState({
+      medico: {
+        especializacao: value
+      }
+    });
+  };
+
+  buscarMedico = () => {
+    axios
+      .post(`/api/especializacao`, this.state.medico)
+      .then(response => {
+        console.log(response.data);
+        if (response.data.length > 0) {
+          this.setState({
+            loading: true,
+            nomebutton: "Buscando",
+            medicosBuscados: response.data
+          });
+        } else {
+          this.setState({
+            medicosBuscados: response.data
+          });
+          notification.open({
+            message: "Localizar Médico",
+            description: "Não existe médicos para essa área :(",
+            icon: <Icon type="meh-o" style={{ color: "red" }} />
+          });
+          return;
+        }
+        setTimeout(() => {
+          this.setState({
+            loading: false,
+            nomebutton: "Buscar"
+          });
+        }, 1500);
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
 
   alterarMedico = () => {
@@ -286,77 +332,99 @@ class CardMedico extends Component {
               />
             </div>
           </Modal>
-          {/* <Content className="conteudo_principal"> */}
-          <Row
-            type="flex"
-            align="center"
-            style={{ paddingTop: "20px", paddingBottom: "20px" }}
-          >
-            {/* <Col span={24} sm={22} md={5} lg={5} xl={5}>
-              <Search
-                placeholder="Buscar Médico"
-                onChange={this.onChangeBuscarMedico}
-                onSearch={this.medicoBuscando}
-                value={this.state.nomedigitado.nome}
-                enterButton
-              />
-            </Col> */}
-            {/* <Col span={24} offset={8} sm={22} md={5} lg={5} xl={5}>
-              <Link to="/adicionarmedico">{btnAdicionarMedico}</Link>
-            </Col> */}
-          </Row>
-          <Row type="flex" align="center" style={{ marginBottom: 50 }}>
-            {Medicos.map(medico => {
-              return (
-                <Card
-                  loading={this.state.loading}
-                  key={medico.codigo}
-                  className="card_paciente"
-                  actions={[
-                    <Tooltip placement="bottom" title={verMedicoToolTip}>
-                      <Icon
-                        type="caret-up"
-                        onClick={() => this.abrirModalVer(medico.codigo)}
-                      />
-                    </Tooltip>,
-                    <Tooltip placement="bottom" title={alterarMedicoToolTip}>
-                      <Icon
-                        type="edit"
-                        onClick={() => this.abrirModalEditar(medico.codigo)}
-                      />
-                    </Tooltip>,
-                    <Popconfirm
-                      placement="topLeft"
-                      title={textoConfirmacao}
-                      onConfirm={this.deletarMedico}
-                      okText="Sim"
-                      cancelText="Não"
-                    >
-                      <Tooltip placement="bottom" title={deletarMedicoToolTip}>
-                        <Icon type="close" />
-                      </Tooltip>
-                    </Popconfirm>
-                  ]}
-                >
-                  <Meta className="descricoes_card_nome" title={medico.nome} />
-                </Card>
-              );
-            })}
-          </Row>
-          <Row type="flex" justify="end">
-            <Col
-              style={{ marginLeft: 50 }}
-              span={24}
-              push={24}
-              sm={22}
-              md={5}
-              lg={5}
-              xl={5}
-            >
-              <Link to="/adicionarmedico">{btnAdicionarMedico}</Link>
-            </Col>
-          </Row>
-          {/* </Content> */}
+          <Content className="conteudo_principal">
+            <Row type="flex" align="center" style={{ paddingBottom: "20px" }} />
+            <Row type="flex" justify="center">
+              <div className="header_medico">
+                Selecione uma das especializações
+              </div>
+            </Row>
+            <Row type="flex" justify="center">
+              <Select
+                size="large"
+                style={{ width: 400 }}
+                onChange={this.escolherEspecializacao}
+                placeholder="Por favor escolha uma especialização"
+              >
+                <Option value="oftalmologista">Oftalmologista</Option>
+                <Option value="cardiologista">Cardiologista</Option>
+                <Option value="neurologista">Neurologista</Option>
+                <Option value="pediatra">Pediatra</Option>
+                <Option value="ortopedia">Ortopedia</Option>
+              </Select>
+            </Row>
+            <Row type="flex" justify="center">
+              <Button
+                style={{ marginTop: 15 }}
+                className="login-form-button btn-registro-custom"
+                size="large"
+                type="primary"
+                loading={this.state.loading}
+                onClick={this.buscarMedico}
+                htmlType="submit"
+              >
+                {this.state.nomebutton}
+                <Icon style={{ marginLeft: 11 }} type="plus" />
+              </Button>
+            </Row>
+            <Row type="flex" align="center" style={{ marginBottom: 50 }}>
+              {Medicos.map(medico => {
+                return (
+                  <Card
+                    loading={this.state.loading}
+                    key={medico.codigo}
+                    className="card_paciente"
+                    actions={[
+                      <Tooltip placement="bottom" title={verMedicoToolTip}>
+                        <Icon
+                          type="caret-up"
+                          onClick={() => this.abrirModalVer(medico.codigo)}
+                        />
+                      </Tooltip>,
+                      <Tooltip placement="bottom" title={alterarMedicoToolTip}>
+                        <Icon
+                          type="edit"
+                          onClick={() => this.abrirModalEditar(medico.codigo)}
+                        />
+                      </Tooltip>,
+                      <Popconfirm
+                        placement="topLeft"
+                        title={textoConfirmacao}
+                        onConfirm={this.deletarMedico}
+                        okText="Sim"
+                        cancelText="Não"
+                      >
+                        <Tooltip
+                          placement="bottom"
+                          title={deletarMedicoToolTip}
+                        >
+                          <Icon type="close" />
+                        </Tooltip>
+                      </Popconfirm>
+                    ]}
+                  >
+                    <Meta
+                      className="descricoes_card_nome"
+                      title={medico.nome}
+                    />
+                  </Card>
+                );
+              })}
+            </Row>
+            <Row type="flex" justify="end">
+              <Col
+                style={{ paddingRight: 50, paddingBottom: 50 }}
+                // span={24}
+                // push={24}
+                // sm={22}
+                // md={5}
+                // lg={5}
+                // xl={5}
+              >
+                <Link to="/adicionarmedico">{btnAdicionarMedico}</Link>
+              </Col>
+            </Row>
+          </Content>
         </Row>
       </div>
     );

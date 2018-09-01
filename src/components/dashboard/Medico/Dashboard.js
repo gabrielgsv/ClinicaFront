@@ -23,6 +23,7 @@ class Dashboard extends Component {
     },
     tokenUser: "",
     loading: false,
+    carregarCardMedico: 0,
     nomebutton: "Buscar",
     especializacao: "",
     redirect: false
@@ -75,8 +76,26 @@ class Dashboard extends Component {
     });
   };
 
+  carregarCardMedico = () => {
+    if (this.state.especializacao !== "") {
+      this.setState({
+        carregarCardMedico: 1
+      });
+    }
+  };
+
   render() {
     const abaSelecionada = this.props.abaLateral;
+    let cardMedico;
+    if (this.state.carregarCardMedico === 1) {
+      console.log("montando componente cardMedico");
+      cardMedico = (
+        <CardMedico
+          especializacao={this.state.especializacao}
+          role={this.state.dadosUsuario.role}
+        />
+      );
+    }
     let btnAdicionarMedico;
     if (this.state.dadosUsuario.role === "m") {
       btnAdicionarMedico = (
@@ -116,44 +135,7 @@ class Dashboard extends Component {
               <div className="descricao-pagina">Localizar médico</div>
             </Col>
           </Row>
-          <Content className="conteudo_principal">
-            <Row type="flex" justify="center">
-              <div className="header_medico">
-                Selecione uma das especializações
-              </div>
-            </Row>
-            <Row type="flex" justify="center">
-              <Select
-                size="large"
-                style={{ width: 400 }}
-                onChange={this.escolherEspecializacao}
-                placeholder="Por favor escolha uma especialização"
-              >
-                <Option value="oftalmologista">Oftalmologista</Option>
-                <Option value="cardiologista">Cardiologista</Option>
-                <Option value="neurologista">Neurologista</Option>
-                <Option value="pediatra">Pediatra</Option>
-                <Option value="ortopedia">Ortopedia</Option>
-              </Select>
-            </Row>
-            <Row type="flex" justify="center">
-              <Button
-                style={{ marginTop: 15 }}
-                className="login-form-button btn-registro-custom"
-                size="large"
-                type="primary"
-                loading={this.state.loading}
-                htmlType="submit"
-              >
-                {this.state.nomebutton}
-                <Icon style={{ marginLeft: 11 }} type="plus" />
-              </Button>
-            </Row>
-            <CardMedico
-              especializaca={this.state.especializacao}
-              role={this.state.dadosUsuario.role}
-            />
-          </Content>
+          <CardMedico role={this.state.dadosUsuario.role} />
         </Layout>
       </Layout>
     );
