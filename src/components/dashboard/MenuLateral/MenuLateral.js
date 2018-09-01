@@ -1,14 +1,44 @@
 import React, { Component } from "react";
-import { Menu, Row, Icon } from "antd";
+import { Menu, Row, Icon, notification } from "antd";
 import { Link } from "react-router-dom";
 
 import "../Dashboard.css";
 
 class MenuLateral extends Component {
+  verificarPermissao = () => {
+    if (this.props.role === "p") {
+      notification.open({
+        message: "Localizar Pacientes",
+        description: "Você não tem permissão de acesso !",
+        icon: <Icon type="meh-o" style={{ color: "red" }} />
+      });
+    }
+  };
+
   render() {
     const opcao = this.props.aba;
     const nome = this.props.nome;
     const role = this.props.role;
+
+    let rotaLocalizarPaciente;
+    if (role === "p") {
+      rotaLocalizarPaciente = (
+        <Menu.Item onClick={this.verificarPermissao} disabled key="4">
+          <Icon type="user" />
+          <span className="nav-text">Paciente</span>
+          <Link to="/paciente" />
+        </Menu.Item>
+      );
+    } else {
+      rotaLocalizarPaciente = (
+        <Menu.Item onClick={this.verificarPermissao} key="4">
+          <Icon type="user" />
+          <span className="nav-text">Paciente</span>
+          <Link to="/paciente" />
+        </Menu.Item>
+      );
+    }
+
     return (
       <Menu
         className="menu_lateral"
@@ -27,7 +57,7 @@ class MenuLateral extends Component {
           <Row className="info-person">
             <h2 className="person-nome">{nome}</h2>
             <h3 className="person-tipo">
-              {role == "p" ? "Paciente" : "Médico"}
+              {role === "p" ? "Paciente" : "Médico"}
             </h3>
           </Row>
         </div>
@@ -46,11 +76,7 @@ class MenuLateral extends Component {
           <span className="nav-text">Médico</span>
           <Link to="/medico" />
         </Menu.Item>
-        <Menu.Item key="4">
-          <Icon type="user" />
-          <span className="nav-text">Paciente</span>
-          <Link to="/paciente" />
-        </Menu.Item>
+        {rotaLocalizarPaciente}
       </Menu>
     );
   }

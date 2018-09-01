@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { Layout, Row, Col, Input, Button, Icon } from "antd";
+import { Layout, Row, Col, Select, Button, Icon } from "antd";
+import { Link } from "react-router-dom";
 import { Redirect } from "react-router";
 
 import "../Dashboard.css";
@@ -10,6 +11,8 @@ import CardMedico from "./CardMedico";
 import axios from "axios";
 
 const { Sider } = Layout;
+const Option = Select.Option;
+const { Content } = Layout;
 
 class Dashboard extends Component {
   state = {
@@ -19,6 +22,9 @@ class Dashboard extends Component {
       role: ""
     },
     tokenUser: "",
+    loading: false,
+    nomebutton: "Buscar",
+    especializacao: "",
     redirect: false
   };
 
@@ -63,17 +69,28 @@ class Dashboard extends Component {
     }
   };
 
+  escolherEspecializacao = value => {
+    this.setState({
+      especializacao: value
+    });
+  };
+
   render() {
     const abaSelecionada = this.props.abaLateral;
     let btnAdicionarMedico;
-    if (this.state.dadosUsuario.role == "m") {
+    if (this.state.dadosUsuario.role === "m") {
       btnAdicionarMedico = (
-        <Button type="primary" style={{ textTransform: "uppercase" }}>
+        <Button
+          className="btn_custom_primary"
+          type="primary"
+          style={{ textTransform: "uppercase" }}
+        >
           Adicionar novo médico
           <Icon type="plus" />
         </Button>
       );
     }
+
     return (
       <Layout>
         {this.redirectLogin()}
@@ -99,7 +116,44 @@ class Dashboard extends Component {
               <div className="descricao-pagina">Localizar médico</div>
             </Col>
           </Row>
-          <CardMedico role={this.state.dadosUsuario.role} />
+          <Content className="conteudo_principal">
+            <Row type="flex" justify="center">
+              <div className="header_medico">
+                Selecione uma das especializações
+              </div>
+            </Row>
+            <Row type="flex" justify="center">
+              <Select
+                size="large"
+                style={{ width: 400 }}
+                onChange={this.escolherEspecializacao}
+                placeholder="Por favor escolha uma especialização"
+              >
+                <Option value="oftalmologista">Oftalmologista</Option>
+                <Option value="cardiologista">Cardiologista</Option>
+                <Option value="neurologista">Neurologista</Option>
+                <Option value="pediatra">Pediatra</Option>
+                <Option value="ortopedia">Ortopedia</Option>
+              </Select>
+            </Row>
+            <Row type="flex" justify="center">
+              <Button
+                style={{ marginTop: 15 }}
+                className="login-form-button btn-registro-custom"
+                size="large"
+                type="primary"
+                loading={this.state.loading}
+                htmlType="submit"
+              >
+                {this.state.nomebutton}
+                <Icon style={{ marginLeft: 11 }} type="plus" />
+              </Button>
+            </Row>
+            <CardMedico
+              especializaca={this.state.especializacao}
+              role={this.state.dadosUsuario.role}
+            />
+          </Content>
         </Layout>
       </Layout>
     );

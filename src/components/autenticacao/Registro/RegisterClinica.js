@@ -52,7 +52,7 @@ class RegisterClinica extends Component {
         };
 
         axios.post(`/api/paciente`, dadosPaciente).then(response => {
-          if (response.status == 201) {
+          if (response.status === 201) {
             this.setState({
               novo_paciente: response.data.nome,
               nomebutton: "Registrando..."

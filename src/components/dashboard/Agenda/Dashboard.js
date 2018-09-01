@@ -104,7 +104,7 @@ class Dashboard extends Component {
               <Link
                 to={"/agendamedico"}
                 className={
-                  this.state.dadosUsuario.role == "p"
+                  this.state.dadosUsuario.role === "p"
                     ? "link_agenda_desabilitado"
                     : ""
                 }
@@ -119,7 +119,7 @@ class Dashboard extends Component {
               <Link
                 to={"/agendapaciente"}
                 className={
-                  this.state.dadosUsuario.role == "m"
+                  this.state.dadosUsuario.role === "m"
                     ? "link_agenda_desabilitado"
                     : ""
                 }

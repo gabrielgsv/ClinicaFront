@@ -7,9 +7,7 @@ import {
   Modal,
   Button,
   Icon,
-  Avatar,
   Tooltip,
-  Popconfirm,
   Input,
   DatePicker,
   notification,
@@ -53,7 +51,7 @@ class CardPaciente extends Component {
     axios
       .post(`/api/buscarpaciente`, this.state.nomedigitado)
       .then(response => {
-        if (response.data.length == 0) {
+        if (response.data.length === 0) {
           notification.open({
             message: "Localizar Paciente",
             description: "Não existe este paciente :(",
@@ -83,7 +81,7 @@ class CardPaciente extends Component {
   };
 
   abrirModalEditar = key => {
-    if (this.props.role == "p") {
+    if (this.props.role === "p") {
       notification.open({
         message: "Editar Paciente",
         description: "Você não tem permissão de acesso !",
@@ -92,7 +90,7 @@ class CardPaciente extends Component {
       return;
     }
     const paciente = this.state.pacientesBuscados.find(paciente => {
-      return paciente.codigo == key;
+      return paciente.codigo === key;
     });
     this.setState({ pacienteSelecionado: paciente });
     this.setState({ estadoModalAlterar: true });
@@ -100,10 +98,9 @@ class CardPaciente extends Component {
 
   abrirModalVer = key => {
     const paciente = this.state.pacientesBuscados.find(paciente => {
-      return paciente.codigo == key;
+      return paciente.codigo === key;
     });
     this.setState({ pacienteSelecionado: paciente });
-    console.log(this.state.pacienteSelecionado);
     this.setState({ estadoModalVer: true });
   };
 
@@ -116,7 +113,7 @@ class CardPaciente extends Component {
   };
 
   deletarPaciente = () => {
-    if (this.props.role == "p") {
+    if (this.props.role === "p") {
       notification.open({
         message: "Deletar Paciente",
         description: "Você não tem permissão de acesso !",
@@ -158,7 +155,17 @@ class CardPaciente extends Component {
     });
   };
 
+  escolherStatus = value => {
+    this.setState({
+      pacienteSelecionado: {
+        ...this.state.pacienteSelecionado,
+        ativo: value
+      }
+    });
+  };
+
   alterarPaciente = () => {
+    console.log(this.state.pacienteSelecionado);
     axios
       .post(`/api/alterarpaciente`, this.state.pacienteSelecionado)
       .then(response => {
@@ -185,11 +192,11 @@ class CardPaciente extends Component {
     const alterarPacienteToolTip = <span>Modificar Paciente</span>;
     const verPacienteToolTip = <span>Visualizar Informações</span>;
     const deletarPacienteToolTip = <span>Deletar Paciente</span>;
-    const textoConfirmacao = (
-      <span>Deseja realmente excluir este paciente ?</span>
-    );
+    // const textoConfirmacao = (
+    //   <span>Deseja realmente excluir este paciente ?</span>
+    // );
     let btnAdicionarPaciente;
-    if (this.props.role == "m") {
+    if (this.props.role === "m") {
       btnAdicionarPaciente = (
         <Button
           className="btn_custom_primary"
@@ -225,6 +232,12 @@ class CardPaciente extends Component {
             <p>Número carteira: {this.state.pacienteSelecionado.carteira}</p>
             <p>
               Data Nascimento: {this.state.pacienteSelecionado.data_nascimento}
+            </p>
+            <p>
+              Status:{" "}
+              {this.state.pacienteSelecionado.ativo === "a"
+                ? "Ativo"
+                : "Inativo"}
             </p>
           </div>
         </Modal>
@@ -295,6 +308,19 @@ class CardPaciente extends Component {
               onChange={this.alterandoPaciente}
               value={this.state.pacienteSelecionado.carteira}
             />
+            <div className="labelNascimento">
+              STATUS{" "}
+              <Select
+                style={{ paddingLeft: 50 }}
+                value={this.state.pacienteSelecionado.ativo}
+                name="ativo"
+                onChange={this.escolherStatus}
+                placeholder="Escolha ums status"
+              >
+                <Option value="a">Ativo</Option>
+                <Option value="i">Inativo</Option>
+              </Select>
+            </div>
           </div>
         </Modal>
         {/* Fim Modal para editar paciente */}
@@ -336,25 +362,15 @@ class CardPaciente extends Component {
                         type="edit"
                         onClick={() => this.abrirModalEditar(paciente.codigo)}
                       />
-                    </Tooltip>,
-                    <Popconfirm
-                      placement="topLeft"
-                      title={textoConfirmacao}
-                      onConfirm={this.deletarPaciente}
-                      okText="Sim"
-                      cancelText="Não"
-                    >
-                      <Tooltip
-                        placement="bottom"
-                        title={deletarPacienteToolTip}
-                      >
-                        <Icon type="close" />
-                      </Tooltip>
-                    </Popconfirm>
+                    </Tooltip>
                   ]}
                 >
                   <Meta
-                    className="descricoes_card_nome"
+                    className={
+                      paciente.ativo === "i"
+                        ? "link_paciente_desabilitado descricoes_card_nome_inativo"
+                        : "descricoes_card_nome"
+                    }
                     title={paciente.nome}
                   />
                 </Card>

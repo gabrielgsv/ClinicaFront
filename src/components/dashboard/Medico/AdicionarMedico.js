@@ -105,7 +105,7 @@ class AdicionarMedico extends Component {
         console.log(this.state.dadosUsuario.anos_atuacao);
         axios.post(`/api/medico`, dadosMedico).then(response => {
           console.log(response);
-          if (response.status == 201) {
+          if (response.status === 201) {
             this.setState({
               novo_medico: response.data.nome,
               nomebutton: "Registrando..."

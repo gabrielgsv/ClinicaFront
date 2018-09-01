@@ -37,7 +37,7 @@ class LoginClinica extends Component {
     axios
       .post(`/api/login`, dadosUsuario)
       .then(response => {
-        if (response.status == 200) {
+        if (response.status === 200) {
           this.setState({ loading: true });
           setTimeout(() => {
             this.setState({ redirect: true });

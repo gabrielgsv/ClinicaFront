@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import { Layout, Row, Col, Input, Icon, Button } from "antd";
-import { Link } from "react-router-dom";
+import { Layout, Row, Col } from "antd";
 import { Redirect } from "react-router";
 
 import "../Dashboard.css";
@@ -10,8 +9,7 @@ import MenuTopo from "./MenuTopo";
 import CardPaciente from "./CardPaciente";
 import axios from "axios";
 
-const { Content, Sider } = Layout;
-const { Search } = Input;
+const { Sider } = Layout;
 
 class Dashboard extends Component {
   state = {

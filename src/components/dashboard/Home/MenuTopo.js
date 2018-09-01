@@ -36,7 +36,7 @@ class MenuTopo extends Component {
               onVisibleChange={this.handleVisibleChange}
               visible={this.state.visible}
             >
-              <a className="ant-dropdown-link" href="#">
+              <a className="ant-dropdown-link" href="">
                 <Avatar
                   size="large"
                   src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"

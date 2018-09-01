@@ -77,6 +77,15 @@ div.busca {
   box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
 }
 
+.header_medico {
+  text-transform: uppercase;
+  font-size: 20px;
+  padding-top: 20px;
+  padding-bottom: 10px;
+  font-weight: bold;
+  color: black;
+}
+
 .data_picker {
   margin-left: 20px;
   margin-top: 20px;
@@ -136,7 +145,11 @@ div.busca {
 
 .link_agenda_desabilitado {
   pointer-events: none;
-  opacity: 0.1;
+  opacity: 0.15;
+}
+
+.link_paciente_desabilitado {
+  opacity: 0.2;
 }
 
 .col_cards_home {
@@ -179,6 +192,15 @@ div.busca {
   font-size: 17px;
   text-align: center;
   color: #42b6a5 !important;
+}
+
+.descricoes_card_nome_inativo > div > div {
+  padding-bottom: 10px;
+  font-weight: 700;
+  font-size: 17px;
+  text-align: center;
+  color: black !important;
+  text-decoration: line-through !important;
 }
 
 .descricoes_card {

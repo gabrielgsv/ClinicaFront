@@ -38,19 +38,19 @@ class CardMedico extends Component {
     medicosBuscados: []
   };
 
-  onChangeBuscarMedico = e => {
-    this.setState({
-      nomedigitado: {
-        nome: e.target.value
-      }
-    });
-  };
+  // onChangeBuscarMedico = e => {
+  //   this.setState({
+  //     nomedigitado: {
+  //       nome: e.target.value
+  //     }
+  //   });
+  // };
 
   medicoBuscando = () => {
     axios
       .post(`/api/buscarmedico`, this.state.nomedigitado)
       .then(response => {
-        if (response.data.length == 0) {
+        if (response.data.length === 0) {
           notification.open({
             message: "Localizar Médico",
             description: "Não existe este médico :(",
@@ -80,7 +80,7 @@ class CardMedico extends Component {
   };
 
   abrirModalEditar = key => {
-    if (this.props.role == "p") {
+    if (this.props.role === "p") {
       notification.open({
         message: "Editar Médico",
         description: "Você não tem permissão de acesso !",
@@ -89,7 +89,7 @@ class CardMedico extends Component {
       return;
     }
     const medico = this.state.medicosBuscados.find(medico => {
-      return medico.codigo == key;
+      return medico.codigo === key;
     });
     this.setState({ medicoSelecionado: medico });
     this.setState({ estadoModalAlterar: true });
@@ -97,7 +97,7 @@ class CardMedico extends Component {
 
   abrirModalVer = key => {
     const medico = this.state.medicosBuscados.find(medico => {
-      return medico.codigo == key;
+      return medico.codigo === key;
     });
     this.setState({ medicoSelecionado: medico });
     this.setState({ estadoModalVer: true });
@@ -112,7 +112,7 @@ class CardMedico extends Component {
   };
 
   deletarMedico = () => {
-    if (this.props.prole == "p") {
+    if (this.props.prole === "p") {
       notification.open({
         message: "Deletar Paciente",
         description: "Você não tem permissão de acesso !",
@@ -186,7 +186,7 @@ class CardMedico extends Component {
     );
 
     let btnAdicionarMedico;
-    if (this.props.role == "m") {
+    if (this.props.role === "m") {
       btnAdicionarMedico = (
         <Button
           className="btn_custom_primary"
@@ -286,70 +286,77 @@ class CardMedico extends Component {
               />
             </div>
           </Modal>
-          <Content className="conteudo_principal">
-            <Row
-              type="flex"
-              align="center"
-              style={{ paddingTop: "20px", paddingBottom: "20px" }}
+          {/* <Content className="conteudo_principal"> */}
+          <Row
+            type="flex"
+            align="center"
+            style={{ paddingTop: "20px", paddingBottom: "20px" }}
+          >
+            {/* <Col span={24} sm={22} md={5} lg={5} xl={5}>
+              <Search
+                placeholder="Buscar Médico"
+                onChange={this.onChangeBuscarMedico}
+                onSearch={this.medicoBuscando}
+                value={this.state.nomedigitado.nome}
+                enterButton
+              />
+            </Col> */}
+            {/* <Col span={24} offset={8} sm={22} md={5} lg={5} xl={5}>
+              <Link to="/adicionarmedico">{btnAdicionarMedico}</Link>
+            </Col> */}
+          </Row>
+          <Row type="flex" align="center" style={{ marginBottom: 50 }}>
+            {Medicos.map(medico => {
+              return (
+                <Card
+                  loading={this.state.loading}
+                  key={medico.codigo}
+                  className="card_paciente"
+                  actions={[
+                    <Tooltip placement="bottom" title={verMedicoToolTip}>
+                      <Icon
+                        type="caret-up"
+                        onClick={() => this.abrirModalVer(medico.codigo)}
+                      />
+                    </Tooltip>,
+                    <Tooltip placement="bottom" title={alterarMedicoToolTip}>
+                      <Icon
+                        type="edit"
+                        onClick={() => this.abrirModalEditar(medico.codigo)}
+                      />
+                    </Tooltip>,
+                    <Popconfirm
+                      placement="topLeft"
+                      title={textoConfirmacao}
+                      onConfirm={this.deletarMedico}
+                      okText="Sim"
+                      cancelText="Não"
+                    >
+                      <Tooltip placement="bottom" title={deletarMedicoToolTip}>
+                        <Icon type="close" />
+                      </Tooltip>
+                    </Popconfirm>
+                  ]}
+                >
+                  <Meta className="descricoes_card_nome" title={medico.nome} />
+                </Card>
+              );
+            })}
+          </Row>
+          <Row type="flex" justify="end">
+            <Col
+              style={{ marginLeft: 50 }}
+              span={24}
+              push={24}
+              sm={22}
+              md={5}
+              lg={5}
+              xl={5}
             >
-              <Col span={24} sm={22} md={5} lg={5} xl={5}>
-                <Search
-                  placeholder="Buscar Médico"
-                  onChange={this.onChangeBuscarMedico}
-                  onSearch={this.medicoBuscando}
-                  value={this.state.nomedigitado.nome}
-                  enterButton
-                />
-              </Col>
-              <Col span={24} offset={8} sm={22} md={5} lg={5} xl={5}>
-                <Link to="/adicionarmedico">{btnAdicionarMedico}</Link>
-              </Col>
-            </Row>
-            <Row type="flex" align="center" style={{ marginBottom: 50 }}>
-              {Medicos.map(medico => {
-                return (
-                  <Card
-                    loading={this.state.loading}
-                    key={medico.codigo}
-                    className="card_paciente"
-                    actions={[
-                      <Tooltip placement="bottom" title={verMedicoToolTip}>
-                        <Icon
-                          type="caret-up"
-                          onClick={() => this.abrirModalVer(medico.codigo)}
-                        />
-                      </Tooltip>,
-                      <Tooltip placement="bottom" title={alterarMedicoToolTip}>
-                        <Icon
-                          type="edit"
-                          onClick={() => this.abrirModalEditar(medico.codigo)}
-                        />
-                      </Tooltip>,
-                      <Popconfirm
-                        placement="topLeft"
-                        title={textoConfirmacao}
-                        onConfirm={this.deletarMedico}
-                        okText="Sim"
-                        cancelText="Não"
-                      >
-                        <Tooltip
-                          placement="bottom"
-                          title={deletarMedicoToolTip}
-                        >
-                          <Icon type="close" />
-                        </Tooltip>
-                      </Popconfirm>
-                    ]}
-                  >
-                    <Meta
-                      className="descricoes_card_nome"
-                      title={medico.nome}
-                    />
-                  </Card>
-                );
-              })}
-            </Row>
-          </Content>
+              <Link to="/adicionarmedico">{btnAdicionarMedico}</Link>
+            </Col>
+          </Row>
+          {/* </Content> */}
         </Row>
       </div>
     );
