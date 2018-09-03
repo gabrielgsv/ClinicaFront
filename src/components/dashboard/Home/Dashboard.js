@@ -42,7 +42,7 @@ class Dashboard extends Component {
 
   componentDidMount = () => {
     axios
-      .get(`/api/recuperartoken`)
+      .get(`https://clini-api-staging.herokuapp.com/api/recuperartoken`)
       .then(response => {
         this.setState({
           dadosUsuario: {
@@ -62,7 +62,7 @@ class Dashboard extends Component {
 
   validarTokenSessao() {
     axios
-      .get(`/api/validartoken`, {
+      .get(`https://clini-api-staging.herokuapp.com/api/validartoken`, {
         withCredentials: true,
         headers: {
           Authorization: "Bearer " + this.state.tokenUser
