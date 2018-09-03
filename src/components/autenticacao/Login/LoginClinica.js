@@ -35,7 +35,7 @@ class LoginClinica extends Component {
     };
     this.setState({ nomebutton: "Validando" });
     axios
-      .post(`/api/login`, dadosUsuario)
+      .post(`https://clini-api-staging.herokuapp.com/api/login`, dadosUsuario)
       .then(response => {
         if (response.status === 200) {
           this.setState({ loading: true });
