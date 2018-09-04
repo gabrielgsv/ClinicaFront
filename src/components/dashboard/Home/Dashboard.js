@@ -65,7 +65,7 @@ class Dashboard extends Component {
       .get(`https://clini-api-staging.herokuapp.com/api/validartoken`, {
         withCredentials: true,
         headers: {
-          "Authorization":"Bearer " + this.state.tokenUser
+          Authorization: "Bearer " + this.state.tokenUser
         }
       })
       .then(() => {})
