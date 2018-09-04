@@ -62,17 +62,17 @@ class MenuLateral extends Component {
           </Row>
         </div>
         <Menu.Item key="1">
-          <Icon type="home" />
+          <Icon type="home" theme="outlined" />
           <span className="nav-text">Home</span>
           <Link to="/home" />
         </Menu.Item>
         <Menu.Item key="2">
-          <Icon type="calendar" />
+          <Icon type="calendar" theme="outlined" />
           <span className="nav-text">Agenda</span>
           <Link to="/agenda" />
         </Menu.Item>
         <Menu.Item key="3">
-          <Icon type="reconciliation" />
+          <Icon type="reconciliation" theme="outlined" />
           <span className="nav-text">Médico</span>
           <Link to="/medico" />
         </Menu.Item>
