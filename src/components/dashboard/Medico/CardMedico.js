@@ -19,8 +19,7 @@ import {
 import "../Dashboard.css";
 import moment from "moment";
 import axios from "axios";
-import { API_ROOT } from "../../../api-config"
-
+import { API_ROOT } from "../../../api-config";
 
 const Option = Select.Option;
 const { Meta } = Card;
@@ -33,9 +32,6 @@ class CardMedico extends Component {
     estadoModalVer: false,
     estadoModalAlterar: false,
     nomebutton: "Buscar",
-    nomedigitado: {
-      nome: ""
-    },
     medico: {
       especializacao: ""
     },
@@ -52,38 +48,38 @@ class CardMedico extends Component {
   //   });
   // };
 
-  // medicoBuscando = () => {
-  //   axios
-  //     .post(`${API_ROOT}/api/buscarmedico`, this.state.nomedigitado)
-  //     .then(response => {
-  //       if (response.data.length === 0) {
-  //         notification.open({
-  //           message: "Localizar Médico",
-  //           description: "Não existe este médico :(",
-  //           icon: <Icon type="meh-o" style={{ color: "red" }} />
-  //         });
-  //         this.setState({
-  //           nomedigitado: {
-  //             nome: ""
-  //           },
-  //           medicosBuscados: response.data
-  //         });
-  //         return;
-  //       }
-  //       this.setState({
-  //         medicosBuscados: response.data,
-  //         loading: true
-  //       });
-  //       setTimeout(() => {
-  //         this.setState({
-  //           loading: false
-  //         });
-  //       }, 1000);
-  //     })
-  //     .catch(err => {
-  //       console.log(err);
-  //     });
-  // };
+  medicoBuscando = () => {
+    axios
+      .post(`${API_ROOT}/api/buscarmedico`, this.state.nomedigitado)
+      .then(response => {
+        if (response.data.length === 0) {
+          notification.open({
+            message: "Localizar Médico",
+            description: "Não existe este médico :(",
+            icon: <Icon type="meh-o" style={{ color: "red" }} />
+          });
+          this.setState({
+            nomedigitado: {
+              nome: ""
+            },
+            medicosBuscados: response.data
+          });
+          return;
+        }
+        this.setState({
+          medicosBuscados: response.data,
+          loading: true
+        });
+        setTimeout(() => {
+          this.setState({
+            loading: false
+          });
+        }, 1000);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
 
   abrirModalEditar = key => {
     if (this.props.role === "p") {
@@ -160,6 +156,15 @@ class CardMedico extends Component {
     });
   };
 
+  escolherStatus = value => {
+    this.setState({
+      medicoSelecionado: {
+        ...this.state.medicoSelecionado,
+        ativo: value
+      }
+    });
+  };
+
   escolherEspecializacao = value => {
     this.setState({
       medico: {
@@ -172,7 +177,6 @@ class CardMedico extends Component {
     axios
       .post(`${API_ROOT}/api/especializacao`, this.state.medico)
       .then(response => {
-        console.log(response.data);
         if (response.data.length > 0) {
           this.setState({
             loading: true,
@@ -205,15 +209,13 @@ class CardMedico extends Component {
   alterarMedico = () => {
     axios
       .post(`${API_ROOT}/api/alterarmedico`, this.state.medicoSelecionado)
-      .then(response => {
-        this.medicoBuscando();
-        setTimeout(() => {
-          notification.open({
-            message: `${response.data.nome}`,
-            description: "Médico alterado com sucesso !",
-            icon: <Icon type="edit" style={{ color: "blue" }} />
-          });
-        }, 1000);
+      .then(() => {
+        notification.open({
+          message: `${this.state.medicoSelecionado.nome}`,
+          description: "Médico alterado com sucesso !",
+          icon: <Icon type="edit" style={{ color: "blue" }} />
+        });
+        this.buscarMedico();
       })
       .catch(err => {
         console.log(err);
@@ -224,14 +226,30 @@ class CardMedico extends Component {
     }, 1000);
   };
 
+  // recarregaMedicoSelecionado = () => {
+  //   axios
+  //     .post(`${API_ROOT}/api/buscarmedico`, this.state.medico)
+  //     .then(response => {
+  //       this.setState({
+  //         medicosBuscados: response.data
+  //       });
+  //       setTimeout(() => {
+  //         notification.open({
+  //           message: `${this.state.medico.nome}`,
+  //           description: "Médico alterado com sucesso !",
+  //           icon: <Icon type="edit" style={{ color: "blue" }} />
+  //         });
+  //       }, 1000);
+  //     })
+  //     .catch(err => {
+  //       console.log(err);
+  //     });
+  // };
+
   render() {
     const Medicos = this.state.medicosBuscados;
     const alterarMedicoToolTip = <span>Modificar Médico</span>;
     const verMedicoToolTip = <span>Visualizar Informações</span>;
-    const deletarMedicoToolTip = <span>Deletar Médico</span>;
-    const textoConfirmacao = (
-      <span>Deseja realmente excluir este médico ?</span>
-    );
 
     let btnAdicionarMedico;
     if (this.props.role === "m") {
@@ -268,6 +286,10 @@ class CardMedico extends Component {
             <p>
               Data Nascimento: {this.state.medicoSelecionado.data_nascimento}
             </p>
+            <p>
+              Status:{" "}
+              {this.state.medicoSelecionado.ativo === "a" ? "Ativo" : "Inativo"}
+            </p>
           </Modal>
           <Modal
             className="modal_consulta"
@@ -296,11 +318,28 @@ class CardMedico extends Component {
               value={this.state.medicoSelecionado.nome}
             />
             <Input
+              addonBefore="Email"
+              name="email"
+              onChange={this.alterandoMedico}
+              value={this.state.medicoSelecionado.email}
+            />
+            <Input
               addonBefore="Especialização"
               name="especializacao"
               onChange={this.alterandoMedico}
               value={this.state.medicoSelecionado.especializacao}
             />
+            <div className="labelNascimento">
+              NASCIMENTO{" "}
+              <DatePicker
+                style={{ paddingLeft: 10 }}
+                name="data_nascimento"
+                onChange={this.onDataNascimento}
+                defaultValue={moment(
+                  this.state.medicoSelecionado.data_nascimento
+                )}
+              />
+            </div>
             <div className="labelNascimento">
               HOSPITAL{" "}
               <Select
@@ -323,15 +362,17 @@ class CardMedico extends Component {
               value={this.state.medicoSelecionado.crm}
             />
             <div className="labelNascimento">
-              NASCIMENTO{" "}
-              <DatePicker
-                style={{ paddingLeft: 10 }}
-                name="data_nascimento"
-                onChange={this.onDataNascimento}
-                defaultValue={moment(
-                  this.state.medicoSelecionado.data_nascimento
-                )}
-              />
+              STATUS{" "}
+              <Select
+                style={{ paddingLeft: 50 }}
+                value={this.state.medicoSelecionado.ativo}
+                name="ativo"
+                onChange={this.escolherStatus}
+                placeholder="Escolha ums status"
+              >
+                <Option value="a">Ativo</Option>
+                <Option value="i">Inativo</Option>
+              </Select>
             </div>
           </Modal>
           <Content className="conteudo_principal">
@@ -366,7 +407,7 @@ class CardMedico extends Component {
                 htmlType="submit"
               >
                 {this.state.nomebutton}
-                <Icon style={{ marginLeft: 11 }} type="plus" />
+                <Icon style={{ marginLeft: 11 }} type="search" />
               </Button>
             </Row>
             <Row type="flex" align="center" style={{ marginBottom: 50 }}>
@@ -388,25 +429,15 @@ class CardMedico extends Component {
                           type="edit"
                           onClick={() => this.abrirModalEditar(medico.codigo)}
                         />
-                      </Tooltip>,
-                      <Popconfirm
-                        placement="topLeft"
-                        title={textoConfirmacao}
-                        onConfirm={this.deletarMedico}
-                        okText="Sim"
-                        cancelText="Não"
-                      >
-                        <Tooltip
-                          placement="bottom"
-                          title={deletarMedicoToolTip}
-                        >
-                          <Icon type="close" />
-                        </Tooltip>
-                      </Popconfirm>
+                      </Tooltip>
                     ]}
                   >
                     <Meta
-                      className="descricoes_card_nome"
+                      className={
+                        medico.ativo === "i"
+                          ? "link_paciente_desabilitado descricoes_card_nome_inativo"
+                          : "descricoes_card_nome"
+                      }
                       title={medico.nome}
                     />
                   </Card>
@@ -414,15 +445,7 @@ class CardMedico extends Component {
               })}
             </Row>
             <Row type="flex" justify="end">
-              <Col
-                style={{ paddingRight: 50, paddingBottom: 50 }}
-                // span={24}
-                // push={24}
-                // sm={22}
-                // md={5}
-                // lg={5}
-                // xl={5}
-              >
+              <Col style={{ paddingRight: 50, paddingBottom: 50 }}>
                 <Link to="/adicionarmedico">{btnAdicionarMedico}</Link>
               </Col>
             </Row>
