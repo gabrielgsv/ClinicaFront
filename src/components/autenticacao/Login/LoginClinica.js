@@ -36,7 +36,7 @@ class LoginClinica extends Component {
     };
     this.setState({ nomebutton: "Validando" });
     axios
-      .post(`${API_ROOT}${API_ROOT}/api/login`, dadosUsuario)
+      .post(`${API_ROOT}/api/login`, dadosUsuario)
       .then(response => {
         if (response.status === 200) {
           this.setState({ loading: true });
