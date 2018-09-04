@@ -72,7 +72,7 @@ class MenuLateral extends Component {
           <Link to="/agenda" />
         </Menu.Item>
         <Menu.Item key="3">
-          <Icon type="medicine-box" />
+          <Icon type="reconciliation" />
           <span className="nav-text">Médico</span>
           <Link to="/medico" />
         </Menu.Item>

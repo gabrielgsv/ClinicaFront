@@ -18,8 +18,7 @@ import {
 import "../Dashboard.css";
 import moment from "moment";
 import axios from "axios";
-import { API_ROOT } from "../../../api-config"
-
+import { API_ROOT } from "../../../api-config";
 
 const Option = Select.Option;
 
@@ -46,26 +45,39 @@ class CardPaciente extends Component {
         nome: e.target.value
       }
     });
-    console.log(this.state.nomedigitado);
   };
 
-  pacienteBuscando = () => {
-    console.log(this.state.nomedigitado);
+  pacienteBuscando = opcao => {
     axios
       .post(`${API_ROOT}/api/buscarpaciente`, this.state.nomedigitado)
       .then(response => {
-        if (response.data.length === 0) {
-          notification.open({
-            message: "Localizar Paciente",
-            description: "Não existe este paciente :(",
-            icon: <Icon type="meh-o" style={{ color: "red" }} />
-          });
+        if (opcao !== 1) {
+          if (response.data.length === 0) {
+            notification.open({
+              message: "Localizar Paciente",
+              description: "Não existe este paciente :(",
+              icon: <Icon type="meh-o" style={{ color: "red" }} />
+            });
+            this.setState({
+              nomedigitado: {
+                nome: ""
+              },
+              pacientesBuscados: response.data
+            });
+            return;
+          }
           this.setState({
+            loading: true,
             nomedigitado: {
               nome: ""
             },
             pacientesBuscados: response.data
           });
+          setTimeout(() => {
+            this.setState({
+              loading: false
+            });
+          }, 1000);
           return;
         }
         this.setState({
@@ -168,11 +180,15 @@ class CardPaciente extends Component {
   };
 
   alterarPaciente = () => {
-    console.log(this.state.pacienteSelecionado);
     axios
       .post(`${API_ROOT}/api/alterarpaciente`, this.state.pacienteSelecionado)
       .then(response => {
-        this.pacienteBuscando();
+        this.setState({
+          nomedigitado: {
+            nome: ""
+          }
+        });
+        this.pacienteBuscando(1);
         setTimeout(() => {
           notification.open({
             message: `${response.data.nome}`,
@@ -194,10 +210,6 @@ class CardPaciente extends Component {
     const Pacientes = this.state.pacientesBuscados;
     const alterarPacienteToolTip = <span>Modificar Paciente</span>;
     const verPacienteToolTip = <span>Visualizar Informações</span>;
-    const deletarPacienteToolTip = <span>Deletar Paciente</span>;
-    // const textoConfirmacao = (
-    //   <span>Deseja realmente excluir este paciente ?</span>
-    // );
     let btnAdicionarPaciente;
     if (this.props.role === "m") {
       btnAdicionarPaciente = (
