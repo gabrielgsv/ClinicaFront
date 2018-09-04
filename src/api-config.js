@@ -12,4 +12,6 @@ if(hostname === 'reactprodution.com') { //se o react for de production
   backendHost = process.env.REACT_APP_BACKEND_HOST || 'http://localhost:3001'; //se não chama a api do localhost
 }
 
+console.log(backendHost)
+
 export const API_ROOT = `${backendHost}`;
