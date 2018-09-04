@@ -18,6 +18,7 @@ import "../Dashboard.css";
 import MenuLateral from "../MenuLateral/MenuLateral.js";
 import MenuTopo from "./MenuTopo";
 import axios from "axios";
+import { API_ROOT } from "../../../api-config"
 
 const { Content, Sider } = Layout;
 
@@ -42,7 +43,8 @@ class Dashboard extends Component {
 
   componentDidMount = () => {
     axios
-      .get(`https://clini-api-staging.herokuapp.com/api/recuperartoken`)
+      // .get(`https://clini-api-staging.herokuapp.com/api/recuperartoken`)
+      .get(`${API_ROOT}/api/recuperartoken`)
       .then(response => {
         this.setState({
           dadosUsuario: {
@@ -62,13 +64,14 @@ class Dashboard extends Component {
 
   validarTokenSessao() {
     axios
-      .get(`https://clini-api-staging.herokuapp.com/api/validartoken`, {
+      // .get(`https://clini-api-staging.herokuapp.com/api/validartoken`, {
+      .get(`${API_ROOT}/api/recuperartoken`, {
         withCredentials: true,
         headers: {
           Authorization: "Bearer " + this.state.tokenUser
         }
       })
-      .then(() => {})
+      .then(() => { })
       .catch(() => {
         this.setState({ redirect: true });
         this.redirectLogin();
