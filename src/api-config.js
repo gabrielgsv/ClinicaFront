@@ -2,9 +2,9 @@ let backendHost;
 
 const hostname = window && window.location && window.location.hostname;
 
-if(hostname === 'reactprodution.com') { //se o react for de production
+if(hostname == 'reactprodution.com') { //se o react for de production
   backendHost = 'https://api.realsite.com'; //chama a api de production
-} else if(hostname === 'https://clini-react-staging.herokuapp.com') { //se o react for de staging
+} else if(hostname == 'https://clini-react-staging.herokuapp.com') { //se o react for de staging
   backendHost = 'https://clini-api-staging.herokuapp.com';// chama a api de staging
 } else if(/^qa/.test(hostname)) {
   backendHost = `https://api.${hostname}`;
