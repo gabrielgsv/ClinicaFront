@@ -15,6 +15,8 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import LogoPaciente from "../../../assets/paciente-logo.jpg";
 import "../Auth.css";
+import { API_ROOT } from "../../../api-config"
+
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -51,7 +53,7 @@ class RegisterClinica extends Component {
           carteira: this.state.carteira
         };
 
-        axios.post(`/api/paciente`, dadosPaciente).then(response => {
+        axios.post(`${API_ROOT}/api/paciente`, dadosPaciente).then(response => {
           if (response.status === 201) {
             this.setState({
               novo_paciente: response.data.nome,

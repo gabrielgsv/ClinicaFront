@@ -17,6 +17,8 @@ import MenuLateral from "../MenuLateral/MenuLateral";
 import MenuTopo from "./MenuTopo";
 import "../Dashboard.css";
 import axios from "axios";
+import { API_ROOT } from "../../../api-config"
+
 
 const { Content, Sider } = Layout;
 const FormItem = Form.Item;
@@ -50,7 +52,7 @@ class AdicionarMedico extends Component {
 
   componentDidMount = () => {
     axios
-      .get("/api/recuperartoken")
+      .get(`${API_ROOT}/api/recuperartoken`)
       .then(response => {
         this.setState({
           dadosUsuario: {
@@ -70,7 +72,7 @@ class AdicionarMedico extends Component {
 
   validarTokenSessao() {
     axios
-      .get("/api/validartoken", {
+      .get(`${API_ROOT}/api/validartoken`, {
         withCredentials: true,
         headers: {
           Authorization: "Bearer " + this.state.tokenUser
@@ -103,7 +105,7 @@ class AdicionarMedico extends Component {
           crm: this.state.crm
         };
         console.log(this.state.dadosUsuario.anos_atuacao);
-        axios.post(`/api/medico`, dadosMedico).then(response => {
+        axios.post(`${API_ROOT}/api/medico`, dadosMedico).then(response => {
           console.log(response);
           if (response.status === 201) {
             this.setState({

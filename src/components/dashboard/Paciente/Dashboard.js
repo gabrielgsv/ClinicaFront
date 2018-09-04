@@ -8,6 +8,8 @@ import MenuLateral from "../MenuLateral/MenuLateral.js";
 import MenuTopo from "./MenuTopo";
 import CardPaciente from "./CardPaciente";
 import axios from "axios";
+import { API_ROOT } from "../../../api-config"
+
 
 const { Sider } = Layout;
 
@@ -24,7 +26,7 @@ class Dashboard extends Component {
 
   componentDidMount = () => {
     axios
-      .get("/api/recuperartoken")
+      .get(`${API_ROOT}/api/recuperartoken`)
       .then(response => {
         this.setState({
           dadosUsuario: {
@@ -44,7 +46,7 @@ class Dashboard extends Component {
 
   validarTokenSessao() {
     axios
-      .get("/api/validartoken", {
+      .get(`${API_ROOT}/api/validartoken`, {
         withCredentials: true,
         headers: {
           Authorization: "Bearer " + this.state.tokenUser

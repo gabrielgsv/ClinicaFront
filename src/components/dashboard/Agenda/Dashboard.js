@@ -10,6 +10,8 @@ import MenuTopo from "./MenuTopo";
 import LogoMedico from "../../../assets/medico-logo.jpg";
 import LogoPaciente from "../../../assets/paciente-logo.jpg";
 import axios from "axios";
+import { API_ROOT } from "../../../api-config"
+
 
 const { Content, Sider } = Layout;
 
@@ -26,7 +28,7 @@ class Dashboard extends Component {
 
   componentDidMount = () => {
     axios
-      .get("/api/recuperartoken")
+      .get(`${API_ROOT}/api/recuperartoken`)
       .then(response => {
         this.setState({
           dadosUsuario: {
@@ -46,7 +48,7 @@ class Dashboard extends Component {
 
   validarTokenSessao() {
     axios
-      .get("/api/validartoken", {
+      .get(`${API_ROOT}/api/validartoken`, {
         withCredentials: true,
         headers: {
           Authorization: "Bearer " + this.state.tokenUser

@@ -24,6 +24,8 @@ import "../Dashboard.css";
 import MenuLateral from "../MenuLateral/MenuLateral.js";
 import MenuTopo from "./MenuTopo";
 import axios from "axios";
+import { API_ROOT } from "../../../api-config"
+
 
 const Option = Select.Option;
 const FormItem = Form.Item;
@@ -68,7 +70,7 @@ class NovaConsulta extends Component {
   componentDidMount = () => {
     this.setState({ etapa: 0 });
     axios
-      .get("/api/recuperartoken")
+      .get(`${API_ROOT}/api/recuperartoken`)
       .then(response => {
         this.setState({
           dadosUsuario: {
@@ -88,13 +90,13 @@ class NovaConsulta extends Component {
 
   validarTokenSessao() {
     axios
-      .get("/api/validartoken", {
+      .get(`${API_ROOT}/api/validartoken`, {
         withCredentials: true,
         headers: {
           Authorization: "Bearer " + this.state.tokenUser
         }
       })
-      .then(() => {})
+      .then(() => { })
       .catch(() => {
         this.setState({ redirect: true });
         this.redirectLogin();
@@ -252,7 +254,7 @@ class NovaConsulta extends Component {
               className="descricoes_card"
               description={`Anos de atuação : ${
                 this.state.medico.anos_atuacao
-              }`}
+                }`}
             />
           </Card>
         </div>
@@ -357,8 +359,8 @@ class NovaConsulta extends Component {
                     this.state.statusMedico ? (
                       <Icon type="user" />
                     ) : (
-                      <Icon type="loading" />
-                    )
+                        <Icon type="loading" />
+                      )
                   }
                 />
                 <Step
@@ -367,8 +369,8 @@ class NovaConsulta extends Component {
                     this.state.statusData ? (
                       <Icon type="hourglass" />
                     ) : (
-                      <Icon type="loading" />
-                    )
+                        <Icon type="loading" />
+                      )
                   }
                 />
                 <Step
@@ -377,8 +379,8 @@ class NovaConsulta extends Component {
                     this.state.statusConfirmar ? (
                       <Icon type="check" />
                     ) : (
-                      <Icon type="loading" />
-                    )
+                        <Icon type="loading" />
+                      )
                   }
                 />
               </Steps>

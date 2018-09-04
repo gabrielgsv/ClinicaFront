@@ -18,6 +18,9 @@ import {
 import "../Dashboard.css";
 import moment from "moment";
 import axios from "axios";
+import { API_ROOT } from "../../../api-config"
+
+
 const Option = Select.Option;
 
 const { Content } = Layout;
@@ -49,7 +52,7 @@ class CardPaciente extends Component {
   pacienteBuscando = () => {
     console.log(this.state.nomedigitado);
     axios
-      .post(`/api/buscarpaciente`, this.state.nomedigitado)
+      .post(`${API_ROOT}/api/buscarpaciente`, this.state.nomedigitado)
       .then(response => {
         if (response.data.length === 0) {
           notification.open({
@@ -167,7 +170,7 @@ class CardPaciente extends Component {
   alterarPaciente = () => {
     console.log(this.state.pacienteSelecionado);
     axios
-      .post(`/api/alterarpaciente`, this.state.pacienteSelecionado)
+      .post(`${API_ROOT}/api/alterarpaciente`, this.state.pacienteSelecionado)
       .then(response => {
         this.pacienteBuscando();
         setTimeout(() => {

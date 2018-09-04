@@ -19,6 +19,8 @@ import {
 import "../Dashboard.css";
 import moment from "moment";
 import axios from "axios";
+import { API_ROOT } from "../../../api-config"
+
 
 const Option = Select.Option;
 const { Meta } = Card;
@@ -52,7 +54,7 @@ class CardMedico extends Component {
 
   // medicoBuscando = () => {
   //   axios
-  //     .post(`/api/buscarmedico`, this.state.nomedigitado)
+  //     .post(`${API_ROOT}/api/buscarmedico`, this.state.nomedigitado)
   //     .then(response => {
   //       if (response.data.length === 0) {
   //         notification.open({
@@ -168,7 +170,7 @@ class CardMedico extends Component {
 
   buscarMedico = () => {
     axios
-      .post(`/api/especializacao`, this.state.medico)
+      .post(`${API_ROOT}/api/especializacao`, this.state.medico)
       .then(response => {
         console.log(response.data);
         if (response.data.length > 0) {
@@ -202,7 +204,7 @@ class CardMedico extends Component {
 
   alterarMedico = () => {
     axios
-      .post(`/api/alterarmedico`, this.state.medicoSelecionado)
+      .post(`${API_ROOT}/api/alterarmedico`, this.state.medicoSelecionado)
       .then(response => {
         this.medicoBuscando();
         setTimeout(() => {

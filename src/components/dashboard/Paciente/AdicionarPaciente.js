@@ -16,6 +16,8 @@ import {
 import MenuLateral from "../MenuLateral/MenuLateral";
 import MenuTopo from "./MenuTopo";
 import axios from "axios";
+import { API_ROOT } from "../../../api-config"
+
 
 import "../Dashboard.css";
 
@@ -76,7 +78,7 @@ class AdicionarPaciente extends Component {
           carteira: this.state.carteira
         };
 
-        axios.post(`/api/paciente`, dadosPaciente).then(response => {
+        axios.post(`${API_ROOT}/api/paciente`, dadosPaciente).then(response => {
           if (response.status === 201) {
             this.setState({
               novo_paciente: response.data.nome,
@@ -115,7 +117,7 @@ class AdicionarPaciente extends Component {
 
   componentDidMount = () => {
     axios
-      .get("/api/recuperartoken")
+      .get(`${API_ROOT}/api/recuperartoken`)
       .then(response => {
         this.setState({
           dadosUsuario: {
@@ -135,7 +137,7 @@ class AdicionarPaciente extends Component {
 
   validarTokenSessao() {
     axios
-      .get("/api/validartoken", {
+      .get(`${API_ROOT}/api/validartoken`, {
         withCredentials: true,
         headers: {
           Authorization: "Bearer " + this.state.tokenUser

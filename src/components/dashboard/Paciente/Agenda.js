@@ -19,6 +19,8 @@ import MenuLateral from "../MenuLateral/MenuLateral.js";
 import MenuTopo from "./MenuTopo";
 import ButtonGroup from "../../../../node_modules/antd/lib/button/button-group";
 import axios from "axios";
+import { API_ROOT } from "../../../api-config"
+
 
 const { Content, Sider } = Layout;
 class Agenda extends Component {
@@ -44,7 +46,7 @@ class Agenda extends Component {
 
   componentDidMount = () => {
     axios
-      .get("/api/recuperartoken")
+      .get(`${API_ROOT}/api/recuperartoken`)
       .then(response => {
         this.setState({
           dadosUsuario: {
@@ -64,7 +66,7 @@ class Agenda extends Component {
 
   validarTokenSessao() {
     axios
-      .get("/api/validartoken", {
+      .get(`${API_ROOT}/api/validartoken`, {
         withCredentials: true,
         headers: {
           Authorization: "Bearer " + this.state.tokenUser
