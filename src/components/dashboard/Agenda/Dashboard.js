@@ -7,8 +7,8 @@ import "../Dashboard.css";
 
 import MenuLateral from "../MenuLateral/MenuLateral.js";
 import MenuTopo from "./MenuTopo";
-import LogoMedico from "../../../assets/medico-logo.jpg";
-import LogoPaciente from "../../../assets/paciente-logo.jpg";
+import LogoMedico from "../../../assets/medico-logo-150x200.jpg";
+import LogoPaciente from "../../../assets/paciente-logo-150x200.jpg";
 import axios from "axios";
 import { API_ROOT } from "../../../api-config"
 
