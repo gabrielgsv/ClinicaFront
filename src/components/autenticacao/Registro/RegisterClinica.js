@@ -13,7 +13,7 @@ import {
 import { Link } from "react-router-dom";
 
 import axios from "axios";
-import LogoPaciente from "../../../assets/paciente-logo.jpg";
+import LogoPaciente from "../../../assets/paciente-logo-150x200.jpg";
 import "../Auth.css";
 import { API_ROOT } from "../../../api-config"
 
