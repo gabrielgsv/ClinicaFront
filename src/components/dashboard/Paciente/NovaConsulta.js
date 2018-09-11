@@ -243,7 +243,7 @@ class NovaConsulta extends Component {
   };
 
   render() {
-    const selecionar = <span>Selecionar</span>;
+    const selecionarMedico = <span>Selecionar Medico</span>;
     const textoConfirmacao = <span>Deseja confirmar esta consulta ?</span>;
     const abaSelecionada = this.props.abaLateral;
     var conteudo;
@@ -274,7 +274,7 @@ class NovaConsulta extends Component {
         area: "Oftalmologista",
         horario: "09:00",
         acao: (
-          <Tooltip placement="bottom" title={selecionar}>
+          <Tooltip placement="bottom" title={selecionarMedico}>
             <Button type="primary" icon="plus" onClick={this.escolherData} />
           </Tooltip>
         )
@@ -348,6 +348,14 @@ class NovaConsulta extends Component {
                     loading={this.state.loading}
                     key={medico.codigo}
                     className="card_paciente"
+                    actions={[
+                      <Tooltip placement="bottom" title={selecionarMedico}>
+                        <Icon
+                          type="check"
+                          onClick={() => this.confirmarConsulta(medico.codigo)}
+                        />
+                      </Tooltip>
+                    ]}
                   >
                     <Meta
                       className="descricoes_card_nome"
