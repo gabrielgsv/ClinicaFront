@@ -22,14 +22,13 @@ import {
 
 import "../Dashboard.css";
 
-import CardMedico from "../Medico/CardMedico"
+import CardMedico from "../Medico/CardMedico";
 
 import MenuLateral from "../MenuLateral/MenuLateral.js";
 import MenuTopo from "./MenuTopo";
 import axios from "axios";
 import moment from "moment";
-import { API_ROOT } from "../../../api-config"
-
+import { API_ROOT } from "../../../api-config";
 
 const Option = Select.Option;
 const FormItem = Form.Item;
@@ -105,7 +104,7 @@ class NovaConsulta extends Component {
           Authorization: "Bearer " + this.state.tokenUser
         }
       })
-      .then(() => { })
+      .then(() => {})
       .catch(() => {
         this.setState({ redirect: true });
         this.redirectLogin();
@@ -222,7 +221,7 @@ class NovaConsulta extends Component {
     // message.info("Consulta confimada !!!");
     notification.open({
       message: "Agendamento de consulta.",
-      description: "Consulta agendada com sucesso !",
+      description: "Consulta agendada com !",
       icon: <Icon type="check" style={{ color: "green" }} />
     });
   };
@@ -284,90 +283,100 @@ class NovaConsulta extends Component {
     if (this.state.etapa === 0) {
       conteudo = (
         <div>
-        <Row type="flex" justify="center">
-          <Modal
-            className="modal_consulta"
-            title={this.state.medicoSelecionado.nome}
-            visible={this.state.estadoModalVer}
-            onCancel={this.fecharModalVer}
-            footer={[
-              <Button key="back" onClick={this.fecharModalVer}>
-                <Icon type="left" />
-                Retornar
-              </Button>
-            ]}
-          >
-            <p>Email: {this.state.medicoSelecionado.email}</p>
-            <p>Especialização: {this.state.medicoSelecionado.especializacao}</p>
-            <p>Hospital Conveniado: {this.state.medicoSelecionado.hospital}</p>
-            <p>Crm: {this.state.medicoSelecionado.crm}</p>
-            <p>
-              Data Nascimento: {this.state.medicoSelecionado.data_nascimento}
-            </p>
-          </Modal>
-            
-          <Content className="conteudo_principal">
-            <Row type="flex" align="center" style={{ paddingBottom: "20px" }} />
-            <Row type="flex" justify="center">
-              <div className="header_medico">
-                Selecione uma das especializações
-              </div>
-            </Row>
-            <Row type="flex" justify="center">
-              <Select
-                size="large"
-                style={{ width: 400 }}
-                onChange={this.escolherEspecializacao}
-                placeholder="Por favor escolha uma especialização"
-              >
-                <Option value="oftalmologista">Oftalmologista</Option>
-                <Option value="cardiologista">Cardiologista</Option>
-                <Option value="neurologista">Neurologista</Option>
-                <Option value="pediatra">Pediatra</Option>
-                <Option value="ortopedia">Ortopedia</Option>
-              </Select>
-            </Row>
-            <Row type="flex" justify="center">
-              <Button
-                style={{ marginTop: 15 }}
-                className="login-form-button btn-registro-custom"
-                size="large"
-                type="primary"
-                loading={this.state.loading}
-                onClick={this.buscarMedico}
-                htmlType="submit"
-              >
-                {this.state.nomebutton}
-                <Icon style={{ marginLeft: 11 }} type="plus" />
-              </Button>
-            </Row>
-            <Row type="flex" align="center" style={{ marginBottom: 50 }}>
-              {Medicos.map(medico => {
-                return (
-                  <Card
-                    loading={this.state.loading}
-                    key={medico.codigo}
-                    className="card_paciente"
-                    actions={[
-                      <Tooltip placement="bottom" title={selecionarMedico}>
-                        <Icon
-                          type="check"
-                          onClick={() => this.confirmarConsulta(medico.codigo)}
-                        />
-                      </Tooltip>
-                    ]}
-                  >
-                    <Meta
-                      className="descricoes_card_nome"
-                      title={medico.nome}
-                    />
-                  </Card>
-                );
-              })}
-            </Row>
-          </Content>
-        </Row>
-      </div>
+          <Row type="flex" justify="center">
+            <Modal
+              className="modal_consulta"
+              title={this.state.medicoSelecionado.nome}
+              visible={this.state.estadoModalVer}
+              onCancel={this.fecharModalVer}
+              footer={[
+                <Button key="back" onClick={this.fecharModalVer}>
+                  <Icon type="left" />
+                  Retornar
+                </Button>
+              ]}
+            >
+              <p>Email: {this.state.medicoSelecionado.email}</p>
+              <p>
+                Especialização: {this.state.medicoSelecionado.especializacao}
+              </p>
+              <p>
+                Hospital Conveniado: {this.state.medicoSelecionado.hospital}
+              </p>
+              <p>Crm: {this.state.medicoSelecionado.crm}</p>
+              <p>
+                Data Nascimento: {this.state.medicoSelecionado.data_nascimento}
+              </p>
+            </Modal>
+
+            <Content className="conteudo_principal">
+              <Row
+                type="flex"
+                align="center"
+                style={{ paddingBottom: "20px" }}
+              />
+              <Row type="flex" justify="center">
+                <div className="header_medico">
+                  Selecione uma das especializações
+                </div>
+              </Row>
+              <Row type="flex" justify="center">
+                <Select
+                  size="large"
+                  style={{ width: 400 }}
+                  onChange={this.escolherEspecializacao}
+                  placeholder="Por favor escolha uma especialização"
+                >
+                  <Option value="oftalmologista">Oftalmologista</Option>
+                  <Option value="cardiologista">Cardiologista</Option>
+                  <Option value="neurologista">Neurologista</Option>
+                  <Option value="pediatra">Pediatra</Option>
+                  <Option value="ortopedia">Ortopedia</Option>
+                </Select>
+              </Row>
+              <Row type="flex" justify="center">
+                <Button
+                  style={{ marginTop: 15 }}
+                  className="login-form-button btn-registro-custom"
+                  size="large"
+                  type="primary"
+                  loading={this.state.loading}
+                  onClick={this.buscarMedico}
+                  htmlType="submit"
+                >
+                  {this.state.nomebutton}
+                  <Icon style={{ marginLeft: 11 }} type="plus" />
+                </Button>
+              </Row>
+              <Row type="flex" align="center" style={{ marginBottom: 50 }}>
+                {Medicos.map(medico => {
+                  return (
+                    <Card
+                      loading={this.state.loading}
+                      key={medico.codigo}
+                      className="card_paciente"
+                      actions={[
+                        <Tooltip placement="bottom" title={selecionarMedico}>
+                          <Icon
+                            type="check"
+                            onClick={() =>
+                              this.confirmarConsulta(medico.codigo)
+                            }
+                          />
+                        </Tooltip>
+                      ]}
+                    >
+                      <Meta
+                        className="descricoes_card_nome"
+                        title={medico.nome}
+                      />
+                    </Card>
+                  );
+                })}
+              </Row>
+            </Content>
+          </Row>
+        </div>
       );
     } else if (this.state.etapa === 1) {
       conteudo = (
@@ -469,8 +478,8 @@ class NovaConsulta extends Component {
                     this.state.statusMedico ? (
                       <Icon type="user" />
                     ) : (
-                        <Icon type="loading" />
-                      )
+                      <Icon type="loading" />
+                    )
                   }
                 />
                 <Step
@@ -479,8 +488,8 @@ class NovaConsulta extends Component {
                     this.state.statusData ? (
                       <Icon type="hourglass" />
                     ) : (
-                        <Icon type="loading" />
-                      )
+                      <Icon type="loading" />
+                    )
                   }
                 />
                 <Step
@@ -489,8 +498,8 @@ class NovaConsulta extends Component {
                     this.state.statusConfirmar ? (
                       <Icon type="check" />
                     ) : (
-                        <Icon type="loading" />
-                      )
+                      <Icon type="loading" />
+                    )
                   }
                 />
               </Steps>
