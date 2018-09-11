@@ -59,15 +59,16 @@ class NovaConsulta extends Component {
       tokenUser: "",
       redirect: false,
       nomebutton: "Buscar",
-      nomedigitado: {
-        nome: ""
-      },
+      // nomedigitado: {
+      //   nome: ""
+      // },
       medico: {
         especializacao: ""
       },
       medicos: [],
       medicoSelecionado: [],
-      medicosBuscados: []
+      medicosBuscados: [],
+      agendamento: []
     };
   }
 
@@ -217,6 +218,14 @@ class NovaConsulta extends Component {
       });
   };
 
+  etapaHorario = codigo => {
+    this.setState({
+      agendamento: { ...this.state.agendamento, codigomedico: codigo },
+      etapa: this.state.etapa + 1,
+      statusMedico: true
+    });
+  };
+
   confirmarConsulta = () => {
     // message.info("Consulta confimada !!!");
     notification.open({
@@ -296,19 +305,7 @@ class NovaConsulta extends Component {
                 </Button>
               ]}
             >
-              <p>Email: {this.state.medicoSelecionado.email}</p>
-              <p>
-                Especialização: {this.state.medicoSelecionado.especializacao}
-              </p>
-              <p>
-                Hospital Conveniado: {this.state.medicoSelecionado.hospital}
-              </p>
-              <p>Crm: {this.state.medicoSelecionado.crm}</p>
-              <p>
-                Data Nascimento: {this.state.medicoSelecionado.data_nascimento}
-              </p>
             </Modal>
-
             <Content className="conteudo_principal">
               <Row
                 type="flex"
@@ -359,9 +356,7 @@ class NovaConsulta extends Component {
                         <Tooltip placement="bottom" title={selecionarMedico}>
                           <Icon
                             type="check"
-                            onClick={() =>
-                              this.confirmarConsulta(medico.codigo)
-                            }
+                            onClick={() => this.etapaHorario(medico.codigo)}
                           />
                         </Tooltip>
                       ]}
@@ -381,25 +376,21 @@ class NovaConsulta extends Component {
     } else if (this.state.etapa === 1) {
       conteudo = (
         <div>
-          <div className="data_picker">
-            <Button
-              type="primary"
-              shape="circle"
-              icon="search"
-              style={{ marginRight: 5, marginBottom: 20, marginLeft: 40 }}
-            />
-            <DatePicker format="DD-MM-YYYY" onChange={this.onChange} />
-          </div>
-          <div style={{ minWidth: "500px", marginLeft: -50 }}>
-            <Table columns={columns} dataSource={data} size="middle" />
-          </div>
-          <div>
-            <Col pull="24" style={{ paddingTop: "150px" }}>
-              <Button type="primary" onClick={this.voltarMedico}>
-                Voltar
-              </Button>
-            </Col>
-          </div>
+          <Row justify="center" type="flex">
+            <div className="data_picker">
+              <DatePicker format="DD-MM-YYYY" onChange={this.onChange} />
+            </div>
+            <div style={{ minWidth: "500px", marginLeft: -50 }}>
+              {/* <Table columns={columns} dataSource={data} size="middle" /> */}
+            </div>
+            <div>
+              <Col pull="24" style={{ paddingTop: "150px" }}>
+                <Button type="primary" onClick={this.voltarMedico}>
+                  Voltar
+                </Button>
+              </Col>
+            </div>
+          </Row>
         </div>
       );
     } else if (this.state.etapa === 2) {
