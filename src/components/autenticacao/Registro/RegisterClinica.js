@@ -15,8 +15,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import LogoPaciente from "../../../assets/paciente-logo-150x200.jpg";
 import "../Auth.css";
-import { API_ROOT } from "../../../api-config"
-
+import { API_ROOT } from "../../../api-config";
 
 const FormItem = Form.Item;
 const Option = Select.Option;

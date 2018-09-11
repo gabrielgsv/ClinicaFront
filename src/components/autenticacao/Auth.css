@@ -38,13 +38,15 @@ div.telaRegistro {
 
 .boxRegistro {
   text-align: center;
-  width: 127%;
+  /* width: 150%; */
   right: 40px;
+  width: 141% !important;
 }
 
 img.imagemTelaInicio {
-  width: 122px;
+  width: 110px;
   margin-left: 34px;
+  margin-top: -44px;
 }
 
 .headerLogin {
