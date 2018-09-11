@@ -230,7 +230,7 @@ class NovaConsulta extends Component {
     // message.info("Consulta confimada !!!");
     notification.open({
       message: "Agendamento de consulta.",
-      description: "Consulta agendada com sucesso !",
+      description: "Consulta agendada com !",
       icon: <Icon type="check" style={{ color: "green" }} />
     });
   };
@@ -304,8 +304,8 @@ class NovaConsulta extends Component {
                   Retornar
                 </Button>
               ]}
-            />
-
+            >
+            </Modal>
             <Content className="conteudo_principal">
               <Row
                 type="flex"
@@ -342,7 +342,7 @@ class NovaConsulta extends Component {
                   htmlType="submit"
                 >
                   {this.state.nomebutton}
-                  <Icon style={{ marginLeft: 11 }} type="search" />
+                  <Icon style={{ marginLeft: 11 }} type="plus" />
                 </Button>
               </Row>
               <Row type="flex" align="center" style={{ marginBottom: 50 }}>
