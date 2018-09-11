@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import { Redirect } from "react-router";
 import {
   Layout,
@@ -21,9 +22,12 @@ import {
 
 import "../Dashboard.css";
 
+import CardMedico from "../Medico/CardMedico"
+
 import MenuLateral from "../MenuLateral/MenuLateral.js";
 import MenuTopo from "./MenuTopo";
 import axios from "axios";
+import moment from "moment";
 import { API_ROOT } from "../../../api-config"
 
 
@@ -53,13 +57,18 @@ class NovaConsulta extends Component {
       statusData: false,
       statusConfirmar: false,
       estadoModal: false,
-      medico: {
-        nome: "RUFINO DA SILVA SS",
-        area: "OFTALMOLOGISTA",
-        anos_atuacao: "20"
-      },
       tokenUser: "",
-      redirect: false
+      redirect: false,
+      nomebutton: "Buscar",
+      nomedigitado: {
+        nome: ""
+      },
+      medico: {
+        especializacao: ""
+      },
+      medicos: [],
+      medicoSelecionado: [],
+      medicosBuscados: []
     };
   }
 
@@ -158,6 +167,57 @@ class NovaConsulta extends Component {
     });
   };
 
+  alterandoMedico = e => {
+    this.setState({
+      medicoSelecionado: {
+        ...this.state.medicoSelecionado,
+        [e.target.name]: e.target.value
+      }
+    });
+  };
+
+  escolherEspecializacao = value => {
+    this.setState({
+      medico: {
+        especializacao: value
+      }
+    });
+  };
+
+  buscarMedico = () => {
+    axios
+      .post(`${API_ROOT}/api/especializacao`, this.state.medico)
+      .then(response => {
+        console.log(response.data);
+        if (response.data.length > 0) {
+          this.setState({
+            loading: true,
+            nomebutton: "Buscando",
+            medicosBuscados: response.data
+          });
+        } else {
+          this.setState({
+            medicosBuscados: response.data
+          });
+          notification.open({
+            message: "Localizar Médico",
+            description: "Não existe médicos para essa área :(",
+            icon: <Icon type="meh-o" style={{ color: "red" }} />
+          });
+          return;
+        }
+        setTimeout(() => {
+          this.setState({
+            loading: false,
+            nomebutton: "Buscar"
+          });
+        }, 1500);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
   confirmarConsulta = () => {
     // message.info("Consulta confimada !!!");
     notification.open({
@@ -187,6 +247,7 @@ class NovaConsulta extends Component {
     const textoConfirmacao = <span>Deseja confirmar esta consulta ?</span>;
     const abaSelecionada = this.props.abaLateral;
     var conteudo;
+    const Medicos = this.state.medicosBuscados;
 
     const columns = [
       {
@@ -223,41 +284,82 @@ class NovaConsulta extends Component {
     if (this.state.etapa === 0) {
       conteudo = (
         <div>
-          {this.redirectLogin()}
-          <Row
-            type="flex"
-            justify="end"
-            style={{ marginTop: "-70px", paddingBottom: "20px" }}
+        <Row type="flex" justify="center">
+          <Modal
+            className="modal_consulta"
+            title={this.state.medicoSelecionado.nome}
+            visible={this.state.estadoModalVer}
+            onCancel={this.fecharModalVer}
+            footer={[
+              <Button key="back" onClick={this.fecharModalVer}>
+                <Icon type="left" />
+                Retornar
+              </Button>
+            ]}
           >
-            <Search
-              className="btn_custom_primary"
-              style={{ marginTop: 70, marginRight: 60 }}
-              placeholder="Buscar Médico"
-              onSearch={value => console.log(value)}
-              enterButton
-            />
-          </Row>
-          <Card className="cards_medicos" onClick={this.onModalOpen} hoverable>
-            <Meta
-              className="descricoes_card_nome"
-              description={this.state.medico.nome}
-            />
-            <Meta
-              className="descricoes_card"
-              description={`Área: ${this.state.medico.area}`}
-            />
-            <Meta
-              className="descricoes_card"
-              description={`Idade : ${this.state.medico.idade}`}
-            />
-            <Meta
-              className="descricoes_card"
-              description={`Anos de atuação : ${
-                this.state.medico.anos_atuacao
-                }`}
-            />
-          </Card>
-        </div>
+            <p>Email: {this.state.medicoSelecionado.email}</p>
+            <p>Especialização: {this.state.medicoSelecionado.especializacao}</p>
+            <p>Hospital Conveniado: {this.state.medicoSelecionado.hospital}</p>
+            <p>Crm: {this.state.medicoSelecionado.crm}</p>
+            <p>
+              Data Nascimento: {this.state.medicoSelecionado.data_nascimento}
+            </p>
+          </Modal>
+            
+          <Content className="conteudo_principal">
+            <Row type="flex" align="center" style={{ paddingBottom: "20px" }} />
+            <Row type="flex" justify="center">
+              <div className="header_medico">
+                Selecione uma das especializações
+              </div>
+            </Row>
+            <Row type="flex" justify="center">
+              <Select
+                size="large"
+                style={{ width: 400 }}
+                onChange={this.escolherEspecializacao}
+                placeholder="Por favor escolha uma especialização"
+              >
+                <Option value="oftalmologista">Oftalmologista</Option>
+                <Option value="cardiologista">Cardiologista</Option>
+                <Option value="neurologista">Neurologista</Option>
+                <Option value="pediatra">Pediatra</Option>
+                <Option value="ortopedia">Ortopedia</Option>
+              </Select>
+            </Row>
+            <Row type="flex" justify="center">
+              <Button
+                style={{ marginTop: 15 }}
+                className="login-form-button btn-registro-custom"
+                size="large"
+                type="primary"
+                loading={this.state.loading}
+                onClick={this.buscarMedico}
+                htmlType="submit"
+              >
+                {this.state.nomebutton}
+                <Icon style={{ marginLeft: 11 }} type="plus" />
+              </Button>
+            </Row>
+            <Row type="flex" align="center" style={{ marginBottom: 50 }}>
+              {Medicos.map(medico => {
+                return (
+                  <Card
+                    loading={this.state.loading}
+                    key={medico.codigo}
+                    className="card_paciente"
+                  >
+                    <Meta
+                      className="descricoes_card_nome"
+                      title={medico.nome}
+                    />
+                  </Card>
+                );
+              })}
+            </Row>
+          </Content>
+        </Row>
+      </div>
       );
     } else if (this.state.etapa === 1) {
       conteudo = (
@@ -411,7 +513,7 @@ class NovaConsulta extends Component {
                     <p>Horário: {this.state.medico.idade}</p>
                     <p>Status: {this.state.medico.anos_atuacao}</p>
                   </Modal>
-                  <Col pull={0} sm={22} md={10} lg={9} xl={7}>
+                  <Col pull={0} sm={22} md={10} lg={24} xl={24}>
                     {conteudo}
                   </Col>
                 </Row>
