@@ -59,9 +59,9 @@ class NovaConsulta extends Component {
       tokenUser: "",
       redirect: false,
       nomebutton: "Buscar",
-      // nomedigitado: {
-      //   nome: ""
-      // },
+      nomedigitado: {
+        nome: ""
+      },
       medico: {
         especializacao: ""
       },
@@ -218,13 +218,13 @@ class NovaConsulta extends Component {
       });
   };
 
-  etapaHorario = codigo => {
-    this.setState({
-      agendamento: { ...this.state.agendamento, codigomedico: codigo },
-      etapa: this.state.etapa + 1,
-      statusMedico: true
-    });
-  };
+  // etapaHorario = codigo => {
+  //   this.setState({
+  //     agendamento: { ...this.state.agendamento, codigomedico: codigo },
+  //     etapa: this.state.etapa + 1,
+  //     statusMedico: true
+  //   });
+  // };
 
   confirmarConsulta = () => {
     // message.info("Consulta confimada !!!");
@@ -304,8 +304,7 @@ class NovaConsulta extends Component {
                   Retornar
                 </Button>
               ]}
-            >
-            </Modal>
+            />
             <Content className="conteudo_principal">
               <Row
                 type="flex"
@@ -356,7 +355,7 @@ class NovaConsulta extends Component {
                         <Tooltip placement="bottom" title={selecionarMedico}>
                           <Icon
                             type="check"
-                            onClick={() => this.etapaHorario(medico.codigo)}
+                            // onClick={() => this.etapaHorario(medico.codigo)}
                           />
                         </Tooltip>
                       ]}
@@ -381,7 +380,7 @@ class NovaConsulta extends Component {
               <DatePicker format="DD-MM-YYYY" onChange={this.onChange} />
             </div>
             <div style={{ minWidth: "500px", marginLeft: -50 }}>
-              {/* <Table columns={columns} dataSource={data} size="middle" /> */}
+              <Table columns={columns} dataSource={data} size="middle" />
             </div>
             <div>
               <Col pull="24" style={{ paddingTop: "150px" }}>
