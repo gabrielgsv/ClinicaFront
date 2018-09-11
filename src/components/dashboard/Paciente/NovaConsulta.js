@@ -313,9 +313,7 @@ class NovaConsulta extends Component {
                 style={{ paddingBottom: "20px" }}
               />
               <Row type="flex" justify="center">
-                <div className="header_medico">
-                  Selecione uma das especializações
-                </div>
+                <div className="header_medico">Selecione uma das</div>
               </Row>
               <Row type="flex" justify="center">
                 <Select
