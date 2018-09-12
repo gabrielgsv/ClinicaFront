@@ -107,7 +107,7 @@ class NovaConsulta extends Component {
           Authorization: "Bearer " + this.state.tokenUser
         }
       })
-      .then(() => {})
+      .then(() => { })
       .catch(() => {
         this.setState({ redirect: true });
         this.redirectLogin();
@@ -254,10 +254,10 @@ class NovaConsulta extends Component {
         this.state.agendamento
       )
       .then(response => {
-        if (response.data !== null) {
-          console.log(response.data)
+        console.log(response.data.length)
+        if (response.data.length !== 0) {
           alert("NÃO PODE INSERIR !");
-        }else{
+        } else {
           alert("PODE INSERIR !");
         }
       })
@@ -524,8 +524,8 @@ class NovaConsulta extends Component {
                     this.state.statusMedico ? (
                       <Icon type="user" />
                     ) : (
-                      <Icon type="loading" />
-                    )
+                        <Icon type="loading" />
+                      )
                   }
                 />
                 <Step
@@ -534,8 +534,8 @@ class NovaConsulta extends Component {
                     this.state.statusData ? (
                       <Icon type="hourglass" />
                     ) : (
-                      <Icon type="loading" />
-                    )
+                        <Icon type="loading" />
+                      )
                   }
                 />
                 <Step
@@ -544,8 +544,8 @@ class NovaConsulta extends Component {
                     this.state.statusConfirmar ? (
                       <Icon type="check" />
                     ) : (
-                      <Icon type="loading" />
-                    )
+                        <Icon type="loading" />
+                      )
                   }
                 />
               </Steps>
