@@ -12,6 +12,7 @@ import {
   Icon,
   Card,
   Table,
+  TimePicker,
   Tooltip,
   DatePicker,
   Form,
@@ -37,6 +38,7 @@ const { Meta } = Card;
 const { TextArea } = Input;
 const Step = Steps.Step;
 const Search = Input.Search;
+const format = "HH:00";
 
 const children = [];
 for (let i = 10; i < 36; i++) {
@@ -124,10 +126,6 @@ class NovaConsulta extends Component {
 
   fecharModal = () => {
     this.setState({ estadoModal: false });
-  };
-
-  onChange = (date, dateString) => {
-    console.log(date, dateString);
   };
 
   voltarMedico = () => {
@@ -218,13 +216,54 @@ class NovaConsulta extends Component {
       });
   };
 
-  // etapaHorario = codigo => {
-  //   this.setState({
-  //     agendamento: { ...this.state.agendamento, codigomedico: codigo },
-  //     etapa: this.state.etapa + 1,
-  //     statusMedico: true
-  //   });
-  // };
+  etapaMedico = codigo => {
+    this.setState({
+      agendamento: {
+        codigomedico: codigo
+      },
+      etapa: this.state.etapa + 1,
+      statusMedico: true
+    });
+  };
+
+  onData = (date, dateString) => {
+    this.setState({
+      agendamento: {
+        ...this.state.agendamento,
+        data: dateString
+      }
+    });
+  };
+
+  onHorario = (time, timeString) => {
+    let horaInt = parseInt(timeString);
+    this.setState({
+      agendamento: {
+        ...this.state.agendamento,
+        horainicio: horaInt,
+        horafim: horaInt + 0.9
+      }
+    });
+  };
+
+  buscarHorario = () => {
+    console.log(this.state.agendamento);
+    axios
+      .post(
+        `${API_ROOT}/api/medico/horariosdisponiveis`,
+        this.state.agendamento
+      )
+      .then(response => {
+        if (response.data.length !== 0) {
+          alert("NÃO PODE INSERIR !");
+        }else{
+          alert("PODE INSERIR !");
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
 
   confirmarConsulta = () => {
     // message.info("Consulta confimada !!!");
@@ -293,18 +332,6 @@ class NovaConsulta extends Component {
       conteudo = (
         <div>
           <Row type="flex" justify="center">
-            <Modal
-              className="modal_consulta"
-              title={this.state.medicoSelecionado.nome}
-              visible={this.state.estadoModalVer}
-              onCancel={this.fecharModalVer}
-              footer={[
-                <Button key="back" onClick={this.fecharModalVer}>
-                  <Icon type="left" />
-                  Retornar
-                </Button>
-              ]}
-            />
             <Content className="conteudo_principal">
               <Row
                 type="flex"
@@ -355,7 +382,7 @@ class NovaConsulta extends Component {
                         <Tooltip placement="bottom" title={selecionarMedico}>
                           <Icon
                             type="check"
-                            // onClick={() => this.etapaHorario(medico.codigo)}
+                            onClick={() => this.etapaMedico(medico.codigo)}
                           />
                         </Tooltip>
                       ]}
@@ -374,22 +401,50 @@ class NovaConsulta extends Component {
       );
     } else if (this.state.etapa === 1) {
       conteudo = (
-        <div>
-          <Row justify="center" type="flex">
-            <div className="data_picker">
-              <DatePicker format="DD-MM-YYYY" onChange={this.onChange} />
-            </div>
-            <div style={{ minWidth: "500px", marginLeft: -50 }}>
-              <Table columns={columns} dataSource={data} size="middle" />
-            </div>
-            <div>
-              <Col pull="24" style={{ paddingTop: "150px" }}>
-                <Button type="primary" onClick={this.voltarMedico}>
-                  Voltar
-                </Button>
-              </Col>
-            </div>
+        <div className="conteudo_principal">
+          <h3>{this.state.agendamento.codigomedico}</h3>
+          <h3>{this.state.agendamento.data}</h3>
+          <h3>{this.state.agendamento.horainicio}</h3>
+          <h3>{this.state.agendamento.horafim}</h3>
+          <Row type="flex" justify="center">
+            <div className="header_medico">Selecione uma data e horário</div>
           </Row>
+          <Row type="flex" justify="center">
+            <Col>
+              <div className="data_picker">
+                <DatePicker onChange={this.onData} />
+              </div>
+            </Col>
+            <Col
+              style={{
+                paddingTop: 19,
+                paddingLeft: 35
+              }}
+            >
+              <TimePicker format={format} onChange={this.onHorario} />
+            </Col>
+          </Row>
+          <Row type="flex" justify="center">
+            <Button
+              style={{ marginTop: 21, marginLeft: 20 }}
+              className="login-form-button btn-registro-custom"
+              size="large"
+              type="primary"
+              loading={this.state.loading}
+              onClick={this.buscarHorario}
+              htmlType="submit"
+            >
+              {this.state.nomebutton}
+              <Icon style={{ marginLeft: 17 }} type="search" />
+            </Button>
+          </Row>
+          <div>
+            <Col pull="24" style={{ paddingTop: "150px", paddingLeft: 50 }}>
+              <Button type="primary" onClick={this.voltarMedico}>
+                Voltar
+              </Button>
+            </Col>
+          </div>
         </div>
       );
     } else if (this.state.etapa === 2) {
