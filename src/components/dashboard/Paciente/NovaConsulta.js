@@ -254,7 +254,7 @@ class NovaConsulta extends Component {
         this.state.agendamento
       )
       .then(response => {
-        if (response.data.length !== 0) {
+        if (response.data !== 0) {
           alert("NÃO PODE INSERIR !");
         }else{
           alert("PODE INSERIR !");
