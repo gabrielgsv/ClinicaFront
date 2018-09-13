@@ -19,8 +19,7 @@ import MenuLateral from "../MenuLateral/MenuLateral.js";
 import MenuTopo from "./MenuTopo";
 import ButtonGroup from "../../../../node_modules/antd/lib/button/button-group";
 import axios from "axios";
-import { API_ROOT } from "../../../api-config"
-
+import { API_ROOT } from "../../../api-config";
 
 const { Content, Sider } = Layout;
 class Agenda extends Component {
@@ -250,12 +249,6 @@ class Agenda extends Component {
               <p>Status: {this.state.consulta.status}</p>
             </Modal>
             <div className="data_picker">
-              <Button
-                type="primary"
-                shape="circle"
-                icon="search"
-                style={{ marginRight: "5px" }}
-              />
               <DatePicker onChange={this.onChange.bind(this)} />
             </div>
             <Row

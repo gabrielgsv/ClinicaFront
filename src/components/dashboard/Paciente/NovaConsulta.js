@@ -40,10 +40,6 @@ const Step = Steps.Step;
 const Search = Input.Search;
 const format = "HH:00";
 
-const children = [];
-for (let i = 10; i < 36; i++) {
-  children.push(<Option key={i.toString(36) + i}>{i.toString(36) + i}</Option>);
-}
 class NovaConsulta extends Component {
   constructor(props) {
     super(props);
@@ -72,10 +68,6 @@ class NovaConsulta extends Component {
       medicosBuscados: [],
       agendamento: []
     };
-  }
-
-  handleChange(value) {
-    console.log(`selected ${value}`);
   }
 
   componentDidMount = () => {
@@ -107,7 +99,7 @@ class NovaConsulta extends Component {
           Authorization: "Bearer " + this.state.tokenUser
         }
       })
-      .then(() => { })
+      .then(() => {})
       .catch(() => {
         this.setState({ redirect: true });
         this.redirectLogin();
@@ -117,6 +109,12 @@ class NovaConsulta extends Component {
   redirectLogin = () => {
     if (this.state.redirect) {
       return <Redirect to="/login" />;
+    }
+  };
+
+  redirectAgenda = () => {
+    if (this.state.redirect) {
+      return <Redirect to="/agendapaciente" />;
     }
   };
 
@@ -130,7 +128,11 @@ class NovaConsulta extends Component {
 
   voltarMedico = () => {
     this.setState({
-      etapa: this.state.etapa - 1
+      etapa: this.state.etapa - 1,
+      medicosBuscados: [],
+      medico: {
+        especializacao: ""
+      }
     });
     this.setState({
       statusMedico: false
@@ -216,10 +218,16 @@ class NovaConsulta extends Component {
       });
   };
 
-  etapaMedico = codigo => {
+  etapaMedico = (codigo, nome) => {
+    notification.open({
+      message: `${nome}`,
+      description: "Selecionado com sucesso :)",
+      icon: <Icon type="smile" style={{ color: "blue" }} />
+    });
     this.setState({
       agendamento: {
-        codigomedico: codigo
+        codigomedico: codigo,
+        nomemedico: nome
       },
       etapa: this.state.etapa + 1,
       statusMedico: true
@@ -247,32 +255,77 @@ class NovaConsulta extends Component {
   };
 
   buscarHorario = () => {
-    console.log(this.state.agendamento);
-    axios
-      .post(
-        `${API_ROOT}/api/medico/horariosdisponiveis`,
-        this.state.agendamento
-      )
-      .then(response => {
-        console.log(response.data.length)
-        if (response.data.length !== 0) {
-          alert("NÃO PODE INSERIR !");
-        } else {
-          alert("PODE INSERIR !");
-        }
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    this.setState({
+      nomebutton: "Buscando",
+      loading: true
+    });
+    setTimeout(() => {
+      this.setState({ loading: false, nomebutton: "Buscar" });
+      axios
+        .post(
+          `${API_ROOT}/api/medico/horariosdisponiveis`,
+          this.state.agendamento
+        )
+        .then(response => {
+          this.etapaHorario();
+        })
+        .catch(err => {
+          notification.open({
+            message: "Data e horario",
+            description: "Horários estão ocupados :(",
+            icon: <Icon type="meh-o" style={{ color: "red" }} />
+          });
+        });
+    }, 1500);
+  };
+
+  alergias = value => {
+    this.setState({
+      agendamento: {
+        ...this.state.agendamento,
+        alegias: value
+      }
+    });
+  };
+
+  descricaoConsulta = e => {
+    this.setState({
+      agendamento: {
+        ...this.state.agendamento,
+        descricao: e.target.value
+      }
+    });
+  };
+
+  etapaHorario = () => {
+    notification.open({
+      message: "Data e horario",
+      description: "Selecionado com sucesso :)",
+      icon: <Icon type="smile" style={{ color: "blue" }} />
+    });
+    this.setState({
+      etapa: this.state.etapa + 1,
+      statusData: true,
+      nomebutton: "Confirmar"
+    });
   };
 
   confirmarConsulta = () => {
-    // message.info("Consulta confimada !!!");
-    notification.open({
-      message: "Agendamento de consulta.",
-      description: "Consulta agendada com !",
-      icon: <Icon type="check" style={{ color: "green" }} />
+    console.log(this.state.agendamento);
+    this.setState({
+      statusConfirmar: true,
+      nomebutton: "Confirmando consulta",
+      loading: true
     });
+    setTimeout(() => {
+      this.setState({ loading: false, redirect: true });
+      this.redirectAgenda();
+      notification.open({
+        message: "Agendamento de consulta.",
+        description: "Consulta agendada com sucesso !",
+        icon: <Icon type="check" style={{ color: "green" }} />
+      });
+    }, 1500);
   };
 
   onModalOpen = () => {
@@ -297,37 +350,53 @@ class NovaConsulta extends Component {
     var conteudo;
     const Medicos = this.state.medicosBuscados;
 
-    const columns = [
-      {
-        title: "Médico",
-        dataIndex: "medico"
-      },
-      {
-        title: "Área",
-        dataIndex: "area"
-      },
-      {
-        title: "Horário",
-        dataIndex: "horario"
-      },
-      {
-        title: "Ação",
-        dataIndex: "acao"
-      }
-    ];
-    const data = [
-      {
-        key: "1",
-        medico: "John Brown",
-        area: "Oftalmologista",
-        horario: "09:00",
-        acao: (
-          <Tooltip placement="bottom" title={selecionarMedico}>
-            <Button type="primary" icon="plus" onClick={this.escolherData} />
-          </Tooltip>
-        )
-      }
-    ];
+    var dadosSelecionados;
+    dadosSelecionados = (
+      <div style={{ position: "absolute" }}>
+        <div style={{ fontSize: 17 }}>
+          <Icon
+            style={{
+              marginLeft: 20,
+              marginTop: 20,
+              marginRight: 15,
+              color: "black"
+            }}
+            type="user"
+            theme="outlined"
+          />
+          <span>{this.state.agendamento.nomemedico}</span>
+        </div>
+        <div style={{ fontSize: 17 }}>
+          <Icon
+            style={{
+              marginLeft: 20,
+              marginTop: 20,
+              marginRight: 15,
+              color: "black"
+            }}
+            type="clock-circle"
+            theme="outlined"
+          />
+          <span>{this.state.agendamento.data}</span>
+        </div>
+        <div style={{ fontSize: 17 }}>
+          <Icon
+            style={{
+              marginLeft: 20,
+              marginTop: 20,
+              marginRight: 15,
+              color: "black"
+            }}
+            type="minus"
+            theme="outlined"
+          />
+          <span>
+            {this.state.agendamento.horainicio}
+            HS
+          </span>
+        </div>
+      </div>
+    );
 
     if (this.state.etapa === 0) {
       conteudo = (
@@ -369,7 +438,7 @@ class NovaConsulta extends Component {
                   htmlType="submit"
                 >
                   {this.state.nomebutton}
-                  <Icon style={{ marginLeft: 11 }} type="plus" />
+                  <Icon style={{ marginLeft: 11 }} type="search" />
                 </Button>
               </Row>
               <Row type="flex" align="center" style={{ marginBottom: 50 }}>
@@ -383,7 +452,9 @@ class NovaConsulta extends Component {
                         <Tooltip placement="bottom" title={selecionarMedico}>
                           <Icon
                             type="check"
-                            onClick={() => this.etapaMedico(medico.codigo)}
+                            onClick={() =>
+                              this.etapaMedico(medico.codigo, medico.nome)
+                            }
                           />
                         </Tooltip>
                       ]}
@@ -403,17 +474,16 @@ class NovaConsulta extends Component {
     } else if (this.state.etapa === 1) {
       conteudo = (
         <div className="conteudo_principal">
-          <h3>{this.state.agendamento.codigomedico}</h3>
-          <h3>{this.state.agendamento.data}</h3>
-          <h3>{this.state.agendamento.horainicio}</h3>
-          <h3>{this.state.agendamento.horafim}</h3>
+          {dadosSelecionados}
           <Row type="flex" justify="center">
-            <div className="header_medico">Selecione uma data e horário</div>
+            <div className="header_selecionar_horario">
+              Selecione uma data e horário
+            </div>
           </Row>
           <Row type="flex" justify="center">
             <Col>
               <div className="data_picker">
-                <DatePicker onChange={this.onData} />
+                <DatePicker size="large" onChange={this.onData} />
               </div>
             </Col>
             <Col
@@ -422,7 +492,11 @@ class NovaConsulta extends Component {
                 paddingLeft: 35
               }}
             >
-              <TimePicker format={format} onChange={this.onHorario} />
+              <TimePicker
+                size="large"
+                format={format}
+                onChange={this.onHorario}
+              />
             </Col>
           </Row>
           <Row type="flex" justify="center">
@@ -440,7 +514,7 @@ class NovaConsulta extends Component {
             </Button>
           </Row>
           <div>
-            <Col pull="24" style={{ paddingTop: "150px", paddingLeft: 50 }}>
+            <Col pull="24" style={{ paddingTop: 20, paddingLeft: 50 }}>
               <Button type="primary" onClick={this.voltarMedico}>
                 Voltar
               </Button>
@@ -450,38 +524,57 @@ class NovaConsulta extends Component {
       );
     } else if (this.state.etapa === 2) {
       conteudo = (
-        <div>
-          <Form>
-            <Row justify="center" type="flex">
-              <div className="descricao-consulta">Descrição</div>
-            </Row>
-            <FormItem>
-              <TextArea placeholder="Detalhes" rows={5} />
-
-              <Select
-                mode="tags"
-                style={{ width: "100%" }}
-                placeholder="Alergias"
-                onChange={this.handleChange}
-              >
-                {children}
-              </Select>
-            </FormItem>
-            <FormItem />
-            <FormItem>
-              <Popconfirm
-                placement="topLeft"
-                title={textoConfirmacao}
-                onConfirm={this.confirmarConsulta}
-                okText="Sim"
-                cancelText="Não"
-              >
-                <Button>Confirmar</Button>
-              </Popconfirm>
-            </FormItem>
-          </Form>
+        <div className="conteudo_principal">
+          {this.redirectAgenda()}
+          {dadosSelecionados}
+          <Row type="flex" justify="center">
+            <Col span={24} lg={12} xl={12}>
+              <Form>
+                <Row justify="center" type="flex">
+                  <div className="descricao-consulta">Descrição</div>
+                </Row>
+                <Row type="flex" justify="center">
+                  <div className="header_descricao_consulta">
+                    Conte-me em detalhes do que está sentindo
+                  </div>
+                </Row>
+                <FormItem>
+                  <TextArea
+                    placeholder="O que você está sentindo ?"
+                    autosize={{ minRows: 2, maxRows: 6 }}
+                    onChange={this.descricaoConsulta}
+                  />
+                  <Row type="flex" justify="center">
+                    <div className="header_descricao_consulta">
+                      Suas alergias
+                    </div>
+                  </Row>
+                  <Select
+                    mode="tags"
+                    style={{ width: "100%" }}
+                    placeholder="Alergias"
+                    onChange={this.alergias}
+                  />
+                </FormItem>
+                <FormItem />
+                <FormItem>
+                  <Popconfirm
+                    placement="topLeft"
+                    title={textoConfirmacao}
+                    onConfirm={this.confirmarConsulta}
+                    okText="Sim"
+                    cancelText="Não"
+                  >
+                    <Button loading={this.state.loading}>
+                      {this.state.nomebutton}
+                    </Button>
+                  </Popconfirm>
+                </FormItem>
+              </Form>
+            </Col>
+          </Row>
           <div>
-            <Col pull="24" style={{ paddingTop: "150px" }}>
+            <Col pull="24" style={{ paddingTop: 20, paddingLeft: 50 }}>
               <Button type="primary" onClick={this.voltarData}>
                 Voltar
               </Button>
@@ -524,28 +617,28 @@ class NovaConsulta extends Component {
                     this.state.statusMedico ? (
                       <Icon type="user" />
                     ) : (
-                        <Icon type="loading" />
-                      )
+                      <Icon type="loading" />
+                    )
                   }
                 />
                 <Step
-                  title="Selecionar Data Hora"
+                  title="Selecionar Data e Hora"
                   icon={
                     this.state.statusData ? (
                       <Icon type="hourglass" />
                     ) : (
-                        <Icon type="loading" />
-                      )
+                      <Icon type="loading" />
+                    )
                   }
                 />
                 <Step
-                  title="Confimar"
+                  title="Confirmar Consulta"
                   icon={
                     this.state.statusConfirmar ? (
                       <Icon type="check" />
                     ) : (
-                        <Icon type="loading" />
-                      )
+                      <Icon type="loading" />
+                    )
                   }
                 />
               </Steps>
