@@ -66,7 +66,8 @@ class NovaConsulta extends Component {
       medicos: [],
       medicoSelecionado: [],
       medicosBuscados: [],
-      agendamento: []
+      agendamento: [],
+      alergias: ""
     };
   }
 
@@ -281,9 +282,16 @@ class NovaConsulta extends Component {
 
   alergias = value => {
     this.setState({
+      alergias: value
+    });
+
+    let alergiasPaciente = this.state.alergias;
+    let alergiasP = alergiasPaciente.toString();
+
+    this.setState({
       agendamento: {
         ...this.state.agendamento,
-        alegias: value
+        alergias: alergiasP
       }
     });
   };
@@ -292,7 +300,8 @@ class NovaConsulta extends Component {
     this.setState({
       agendamento: {
         ...this.state.agendamento,
-        descricao: e.target.value
+        codigopaciente: this.state.dadosUsuario.codigo,
+        motivo: e.target.value
       }
     });
   };
@@ -311,21 +320,28 @@ class NovaConsulta extends Component {
   };
 
   confirmarConsulta = () => {
-    console.log(this.state.agendamento);
-    this.setState({
-      statusConfirmar: true,
-      nomebutton: "Confirmando consulta",
-      loading: true
-    });
-    setTimeout(() => {
-      this.setState({ loading: false, redirect: true });
-      this.redirectAgenda();
-      notification.open({
-        message: "Agendamento de consulta.",
-        description: "Consulta agendada com sucesso !",
-        icon: <Icon type="check" style={{ color: "green" }} />
+    axios
+      .post(`${API_ROOT}/api/novaconsulta`, this.state.agendamento)
+      .then(response => {
+        console.log(response);
+        this.setState({
+          statusConfirmar: true,
+          nomebutton: "Confirmando consulta",
+          loading: true
+        });
+        setTimeout(() => {
+          this.setState({ loading: false, redirect: true });
+          this.redirectAgenda();
+          notification.open({
+            message: "Agendamento de consulta.",
+            description: "Consulta agendada com sucesso !",
+            icon: <Icon type="check" style={{ color: "green" }} />
+          });
+        }, 1500);
+      })
+      .catch(err => {
+        console.log(err);
       });
-    }, 1500);
   };
 
   onModalOpen = () => {

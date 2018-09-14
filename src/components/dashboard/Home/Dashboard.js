@@ -18,7 +18,7 @@ import "../Dashboard.css";
 import MenuLateral from "../MenuLateral/MenuLateral.js";
 import MenuTopo from "./MenuTopo";
 import axios from "axios";
-import { API_ROOT } from "../../../api-config"
+import { API_ROOT } from "../../../api-config";
 
 const { Content, Sider } = Layout;
 
@@ -38,12 +38,12 @@ class Dashboard extends Component {
       area: "A1",
       horario: "H1",
       status: "S1"
-    }
+    },
+    listaAgenda: []
   };
 
   componentDidMount = () => {
     axios
-      // .get(`https://clini-api-staging.herokuapp.com${API_ROOT}/api/recuperartoken`)
       .get(`${API_ROOT}/api/recuperartoken`)
       .then(response => {
         this.setState({
@@ -64,19 +64,33 @@ class Dashboard extends Component {
 
   validarTokenSessao() {
     axios
-      // .get(`https://clini-api-staging.herokuapp.com${API_ROOT}/api/validartoken`, {
-      .get(`${API_ROOT}/api/recuperartoken`, {
+      .get(`${API_ROOT}/api/validartoken`, {
         withCredentials: true,
         headers: {
           Authorization: "Bearer " + this.state.tokenUser
         }
       })
-      .then(() => { })
+      .then(() => {
+        this.agendaHoje();
+      })
       .catch(() => {
         this.setState({ redirect: true });
         this.redirectLogin();
       });
   }
+
+  agendaHoje = () => {
+    axios
+      .get(`${API_ROOT}/api/paciente/agenda/${this.state.dadosUsuario.codigo}`)
+      .then(response => {
+        this.setState({
+          listaAgenda: response.data
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
 
   redirectLogin = () => {
     if (this.state.redirect) {
@@ -97,92 +111,86 @@ class Dashboard extends Component {
     const f = <span>Finalizado</span>;
     const c = <span>Cancelado</span>;
     const verificar = <span>Verificar</span>;
-
+    const Agenda = this.state.listaAgenda;
     const abaSelecionada = this.props.abaLateral;
 
     const columns = [
       {
         title: "Médico",
-        dataIndex: "medico"
+        dataIndex: "nomemedico"
       },
       {
         title: "Área",
-        dataIndex: "area"
+        dataIndex: "especializacao"
       },
       {
         title: "Horário",
-        dataIndex: "horario"
+        dataIndex: "hora"
       },
+
+      // <Tooltip placement="right" title={f}>
+      //       <Icon
+      //         className={
+      //           this.state.listaAgenda.status === "a"
+      //             ? "icones_agenda_status_finalizado"
+      //             : "icones_agenda_status_esperando"
+      //         }
+      //         type="check"
+      //       />
+      //     </Tooltip>
+
       {
         title: "Status",
-        dataIndex: "status"
+        render: status => {
+          return (
+            <Tooltip placement="right" title={status.status}>
+              <Icon
+                className={
+                  status.status === "a"
+                    ? "icones_agenda_status_esperando"
+                    : "icones_agenda_status_finalizado"
+                }
+                type={status.status === "a" ? "loading" : "check"}
+              />
+            </Tooltip>
+          );
+        }
       },
       {
         title: "Ação",
-        dataIndex: "acao"
+        render: acao => (
+          <Tooltip placement="right" title={verificar}>
+            <Button
+              type="primary"
+              icon="up-square"
+              onClick={this.onModalOpen}
+            />
+          </Tooltip>
+        )
       }
     ];
+
     const data = [
-      {
-        key: "1",
-        medico: "John Brown",
-        area: "Oftalmologista",
-        horario: "09:00",
-        status: (
-          <Tooltip placement="right" title={a}>
-            <Icon className="icones_agenda_status_esperando" type="loading" />
-          </Tooltip>
-        ),
-        acao: (
-          <Tooltip placement="right" title={verificar}>
-            <Button
-              type="primary"
-              icon="up-square"
-              onClick={this.onModalOpen}
-            />
-          </Tooltip>
-        )
-      },
-      {
-        key: "2",
-        medico: "John Brown",
-        area: "Oftalmologista",
-        horario: "09:00",
-        status: (
-          <Tooltip placement="right" title={f}>
-            <Icon className="icones_agenda_status_finalizado" type="check" />
-          </Tooltip>
-        ),
-        acao: (
-          <Tooltip placement="right" title={verificar}>
-            <Button
-              type="primary"
-              icon="up-square"
-              onClick={this.onModalOpen}
-            />
-          </Tooltip>
-        )
-      },
-      {
-        key: "3",
-        medico: "John Brown",
-        area: "Oftalmologista",
-        horario: "09:00",
-        status: (
-          <Tooltip placement="right" title={c}>
-            <Icon className="icones_agenda_status_cancelado" type="close" />
-          </Tooltip>
-        ),
-        acao: (
-          <Tooltip placement="right" title={verificar}>
-            <Button
-              type="primary"
-              icon="up-square"
-              onClick={this.onModalOpen}
-            />
-          </Tooltip>
-        )
-      }
+      //   {
+      //     key: "1",
+      //     medico: Agenda.nomemedico,
+      //     area: Agenda.especializacao,
+      //     horario: Agenda.hora
+      //     status: (
+      //       <Tooltip placement="right" title={a}>
+      //         <Icon className="icones_agenda_status_esperando" type="loading" />
+      //       </Tooltip>
+      //     ),
+      //     acao: (
+      //       <Tooltip placement="right" title={verificar}>
+      //         <Button
+      //           type="primary"
+      //           icon="up-square"
+      //           onClick={this.onModalOpen}
+      //         />
+      //       </Tooltip>
+      //     )
+      //   }
     ];
 
     return (
@@ -277,7 +285,12 @@ class Dashboard extends Component {
             <Col span={22} sm={20} md={20} lg={14} xl={14}>
               <div>
                 <div className="descricao-pagina">Agenda de hoje</div>
-                <Table columns={columns} dataSource={data} size="middle" />
+                <Table
+                  columns={columns}
+                  dataSource={this.state.listaAgenda}
+                  rowKey={this.state.listaAgenda.codigo}
+                  size="middle"
+                />
               </div>
             </Col>
           </Row>
