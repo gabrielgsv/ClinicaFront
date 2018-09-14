@@ -135,7 +135,7 @@ class Dashboard extends Component {
       //             ? "icones_agenda_status_finalizado"
       //             : "icones_agenda_status_esperando"
       //         }
-      //         type="check"
+      //         type=""
       //       />
       //     </Tooltip>
 
