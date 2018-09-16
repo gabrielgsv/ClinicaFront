@@ -30,6 +30,7 @@ import MenuTopo from "./MenuTopo";
 import axios from "axios";
 import moment from "moment";
 import { API_ROOT } from "../../../api-config";
+import { height } from "window-size";
 
 const Option = Select.Option;
 const FormItem = Form.Item;
@@ -66,6 +67,7 @@ class NovaConsulta extends Component {
       medicos: [],
       medicoSelecionado: [],
       medicosBuscados: [],
+      horas: [7, 8, 9, 10, 11, 13, 14, 15, 16, 17],
       agendamento: [],
       alergias: ""
     };
@@ -100,7 +102,7 @@ class NovaConsulta extends Component {
           Authorization: "Bearer " + this.state.tokenUser
         }
       })
-      .then(() => {})
+      .then(() => { })
       .catch(() => {
         this.setState({ redirect: true });
         this.redirectLogin();
@@ -498,22 +500,19 @@ class NovaConsulta extends Component {
           </Row>
           <Row type="flex" justify="center">
             <Col>
-              <div className="data_picker">
+              <div style={{ marginBottom: "20px" }} className="data_picker">
                 <DatePicker size="large" onChange={this.onData} />
               </div>
             </Col>
-            <Col
-              style={{
-                paddingTop: 19,
-                paddingLeft: 35
-              }}
-            >
-              <TimePicker
-                size="large"
-                format={format}
-                onChange={this.onHorario}
-              />
-            </Col>
+          </Row>
+          <Row type="flex" justify="center" >
+            <div style={{ width: "400px", marginLeft: "30px" }}>
+              {this.state.horas.map((horas) =>
+                <Col span={3} style={{ margin: "15px" }} >
+                  <div style={{ backgroundColor: "#42b6a5", height: "50px", borderRadius: "8px", color: "white", textAlign: "center", paddingTop: "13px" }}>{horas}:00</div>
+                </Col>
+              )}
+            </div>
           </Row>
           <Row type="flex" justify="center">
             <Button
@@ -633,8 +632,8 @@ class NovaConsulta extends Component {
                     this.state.statusMedico ? (
                       <Icon type="user" />
                     ) : (
-                      <Icon type="loading" />
-                    )
+                        <Icon type="loading" />
+                      )
                   }
                 />
                 <Step
@@ -643,8 +642,8 @@ class NovaConsulta extends Component {
                     this.state.statusData ? (
                       <Icon type="hourglass" />
                     ) : (
-                      <Icon type="loading" />
-                    )
+                        <Icon type="loading" />
+                      )
                   }
                 />
                 <Step
@@ -653,8 +652,8 @@ class NovaConsulta extends Component {
                     this.state.statusConfirmar ? (
                       <Icon type="check" />
                     ) : (
-                      <Icon type="loading" />
-                    )
+                        <Icon type="loading" />
+                      )
                   }
                 />
               </Steps>
