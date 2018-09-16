@@ -67,7 +67,7 @@ class NovaConsulta extends Component {
       medicos: [],
       medicoSelecionado: [],
       medicosBuscados: [],
-      horas: [7, 8, 9, 10, 11, 13, 14, 15, 16, 17],
+      horas: [], // 7, 8, 9, 10, 11, 13, 14, 15, 16, 17
       agendamento: [],
       alergias: ""
     };
@@ -237,15 +237,6 @@ class NovaConsulta extends Component {
     });
   };
 
-  onData = (date, dateString) => {
-    this.setState({
-      agendamento: {
-        ...this.state.agendamento,
-        data: dateString
-      }
-    });
-  };
-
   onHorario = (time, timeString) => {
     let horaInt = parseInt(timeString);
     this.setState({
@@ -360,6 +351,31 @@ class NovaConsulta extends Component {
       this.setState({ loading: false, estadoModal: false });
     }, 1000);
   };
+
+  buscarHoras = (date, dateString) => {
+    this.setState({
+      agendamento: {
+        ...this.state.agendamento,
+        data: dateString
+      }
+    }, () => {
+      console.log(this.state.agendamento)
+    })
+    const horas = [7, 8, 9, 10, 11, 13, 14, 15, 16, 17] //exemplo get não funcionando
+    this.setState({ horas })
+
+    axios.get(``, this.state.agendamento)
+      .then(res => {
+        console.log(this.state.horas)
+        const horas = res.data
+        if (horas == null) {
+          // retornar mensagem de não ter horas disponiveis
+        } else {
+          this.setState({ horas })
+        }
+      })
+
+  }
 
   render() {
     const selecionarMedico = <span>Selecionar Medico</span>;
@@ -501,7 +517,7 @@ class NovaConsulta extends Component {
           <Row type="flex" justify="center">
             <Col>
               <div style={{ marginBottom: "20px" }} className="data_picker">
-                <DatePicker size="large" onChange={this.onData} />
+                <DatePicker size="large" onChange={this.buscarHoras} />
               </div>
             </Col>
           </Row>
@@ -514,20 +530,6 @@ class NovaConsulta extends Component {
               )}
             </div>
           </Row>
-          {/* <Row type="flex" justify="center">
-            <Button
-              style={{ marginTop: 21, marginLeft: 20 }}
-              className="login-form-button btn-registro-custom"
-              size="large"
-              type="primary"
-              loading={this.state.loading}
-              onClick={this.buscarHorario}
-              htmlType="submit"
-            >
-              {this.state.nomebutton}
-              <Icon style={{ marginLeft: 17 }} type="search" />
-            </Button>
-          </Row> */}
           <div>
             <Col pull="24" style={{ paddingTop: 20, paddingLeft: 50 }}>
               <Button type="primary" onClick={this.voltarMedico}>
