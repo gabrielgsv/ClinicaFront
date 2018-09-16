@@ -514,7 +514,7 @@ class NovaConsulta extends Component {
               )}
             </div>
           </Row>
-          <Row type="flex" justify="center">
+          {/* <Row type="flex" justify="center">
             <Button
               style={{ marginTop: 21, marginLeft: 20 }}
               className="login-form-button btn-registro-custom"
@@ -527,7 +527,7 @@ class NovaConsulta extends Component {
               {this.state.nomebutton}
               <Icon style={{ marginLeft: 17 }} type="search" />
             </Button>
-          </Row>
+          </Row> */}
           <div>
             <Col pull="24" style={{ paddingTop: 20, paddingLeft: 50 }}>
               <Button type="primary" onClick={this.voltarMedico}>
