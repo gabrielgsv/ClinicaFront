@@ -363,18 +363,16 @@ class NovaConsulta extends Component {
     })
     const horas = [7, 8, 9, 10, 11, 13, 14, 15, 16, 17] //exemplo get não funcionando
     this.setState({ horas })
-
-    axios.get(``, this.state.agendamento)
-      .then(res => {
-        console.log(this.state.horas)
-        const horas = res.data
-        if (horas == null) {
-          // retornar mensagem de não ter horas disponiveis
-        } else {
-          this.setState({ horas })
-        }
-      })
-
+    // axios.get(``, this.state.agendamento)
+    //   .then(res => {
+    //     console.log(this.state.horas)
+    //     const horas = res.data
+    //     if (horas == null) {
+    //       // retornar mensagem de não ter horas disponiveis
+    //     } else {
+    //       this.setState({ horas })
+    //     }
+    //   })
   }
 
   render() {

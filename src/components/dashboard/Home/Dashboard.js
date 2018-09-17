@@ -106,6 +106,13 @@ class Dashboard extends Component {
     this.setState({ modalConsulta: false });
   };
 
+  verificarAgenda = () => {
+    if (this.state.listaAgenda == null)
+      return
+    else 
+      return "this.state.listaAgenda.codigo"
+  }
+
   render() {
     const a = <span>Aguardando</span>;
     const f = <span>Finalizado</span>;
@@ -286,9 +293,10 @@ class Dashboard extends Component {
               <div>
                 <div className="descricao-pagina">Agenda de hoje</div>
                 <Table
+                  locale={{ emptyText: 'Nenhum Agendamento Cadastrado' }}
                   columns={columns}
                   dataSource={this.state.listaAgenda}
-                  rowKey={this.state.listaAgenda.codigo}
+                  rowKey={this.verificarAgenda}
                   size="middle"
                 />
               </div>
