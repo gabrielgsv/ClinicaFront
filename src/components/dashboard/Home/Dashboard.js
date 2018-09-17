@@ -134,18 +134,6 @@ class Dashboard extends Component {
         title: "Horário",
         dataIndex: "hora"
       },
-
-      // <Tooltip placement="right" title={f}>
-      //       <Icon
-      //         className={
-      //           this.state.listaAgenda.status === "a"
-      //             ? "icones_agenda_status_finalizado"
-      //             : "icones_agenda_status_esperando"
-      //         }
-      //         type=""
-      //       />
-      //     </Tooltip>
-
       {
         title: "Status",
         render: status => {

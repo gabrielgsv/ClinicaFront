@@ -356,18 +356,24 @@ class NovaConsulta extends Component {
     this.setState({
       agendamento: {
         ...this.state.agendamento,
-        data: dateString
-      }
+        data: dateString,
+        loading: true
+      },
     }, () => {
       console.log(this.state.agendamento)
     })
+    setTimeout(() => {
+        this.setState({
+          loading: false
+        })
+    }, 1500)
     const horas = [7, 8, 9, 10, 11, 13, 14, 15, 16, 17] //exemplo get não funcionando
     this.setState({ horas })
     // axios.get(``, this.state.agendamento)
     //   .then(res => {
     //     console.log(this.state.horas)
     //     const horas = res.data
-    //     if (horas == null) {
+    //  7, 8, 9, 10, 11, 13, 14, 15, 16, 17   if (horas == null) {
     //       // retornar mensagem de não ter horas disponiveis
     //     } else {
     //       this.setState({ horas })
@@ -523,7 +529,7 @@ class NovaConsulta extends Component {
             <div style={{ width: "400px", marginLeft: "30px" }}>
               {this.state.horas.map((horas) =>
                 <Col span={3} style={{ margin: "15px" }} >
-                  <div style={{ backgroundColor: "#42b6a5", height: "50px", borderRadius: "8px", color: "white", textAlign: "center", paddingTop: "13px" }}>{horas}:00</div>
+                  <div loading={this.state.loading} style={{ backgroundColor: "#42b6a5", height: "50px", borderRadius: "8px", color: "white", textAlign: "center", paddingTop: "13px" }}>{horas}:00</div>
                 </Col>
               )}
             </div>
