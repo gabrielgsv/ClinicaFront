@@ -67,7 +67,7 @@ class NovaConsulta extends Component {
       medicos: [],
       medicoSelecionado: [],
       medicosBuscados: [],
-      horas: [], // 7, 8, 9, 10, 11, 13, 14, 15, 16, 17
+      horas: [],
       agendamento: [],
       alergias: ""
     };
@@ -518,9 +518,9 @@ class NovaConsulta extends Component {
           </Row>
           <Row type="flex" justify="center" >
             <div style={{ width: "400px", marginLeft: "30px" }}>
-              {this.state.horas.map((horas) =>
+              {this.state.horas.map(horas =>
                 <Col span={3} style={{ margin: "15px" }} >
-                  <div loading={this.state.loading} style={{ backgroundColor: "#42b6a5", height: "50px", borderRadius: "8px", color: "white", textAlign: "center", paddingTop: "13px" }}>{this.state.horas}00</div>
+                  <div loading={this.state.loading} style={{ backgroundColor: "#42b6a5", height: "50px", borderRadius: "8px", color: "white", textAlign: "center", paddingTop: "13px" }}>{hora}00</div>
                 </Col>
               )}
             </div>
