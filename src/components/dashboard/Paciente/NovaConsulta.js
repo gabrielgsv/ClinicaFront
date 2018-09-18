@@ -359,20 +359,18 @@ class NovaConsulta extends Component {
         data: dateString,
         loading: true
       },
-    })
-    this.buscarHorasDisponiveis()
+    },
+      axios.get(`${API_ROOT}/api/medico/horariosdisponiveis/${this.state.agendamento.data}/${this.state.agendamento.codigomedico}`)
+        .then(response => {
+          console.log(response)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    )
+    console.log(this.state.agendamento)
     const horas = [7, 8, 9, 10, 11, 13, 14, 15, 16, 17] //exemplo get não funcionando
     this.setState({ horas })
-  }
-
-  buscarHorasDisponiveis() {
-    axios.get(`${API_ROOT}/api/medico/horariosdisponiveis/${this.state.agendamento.data}/${this.state.agendamento.codigomedico}`)
-    .then(response => {
-      console.log(response)
-    })
-    .catch(err => {
-      console.log(err)
-    })
   }
 
   render() {
