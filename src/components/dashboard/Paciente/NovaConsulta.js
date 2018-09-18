@@ -361,8 +361,10 @@ class NovaConsulta extends Component {
       },
     }, () => {
       axios.get(`${API_ROOT}/api/medico/horariosdisponiveis/${this.state.agendamento.data}/${this.state.agendamento.codigomedico}`)
-        .then(response => {
-          console.log(response)
+        .then(() => {
+          this.setState({
+            horas: response.data
+          })
         })
         .catch(err => {
           console.log(err)
@@ -518,7 +520,7 @@ class NovaConsulta extends Component {
             <div style={{ width: "400px", marginLeft: "30px" }}>
               {this.state.horas.map((horas) =>
                 <Col span={3} style={{ margin: "15px" }} >
-                  <div loading={this.state.loading} style={{ backgroundColor: "#42b6a5", height: "50px", borderRadius: "8px", color: "white", textAlign: "center", paddingTop: "13px" }}>00</div>
+                  <div loading={this.state.loading} style={{ backgroundColor: "#42b6a5", height: "50px", borderRadius: "8px", color: "white", textAlign: "center", paddingTop: "13px" }}>{this.state.horas}00</div>
                 </Col>
               )}
             </div>
