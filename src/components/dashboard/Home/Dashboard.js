@@ -214,23 +214,35 @@ class Dashboard extends Component {
             </Col>
           </Row>
           <Content className="conteudo_home">
-            <Modal
-              className="modal_consulta"
-              title={this.state.consulta.titulo}
-              visible={this.state.modalConsulta}
-              onCancel={this.fecharModal}
-              footer={[
-                <Button key="back" onClick={this.fecharModal}>
-                  <Icon type="left" />
-                  Retornar
-                </Button>
-              ]}
-            >
-              <p>Médico: {this.state.consulta.medico} </p>
-              <p>Área: {this.state.consulta.area}</p>
-              <p>Horário: {this.state.consulta.horario}</p>
-              <p>Status: {this.state.consulta.status}</p>
-            </Modal>
+
+            {Agenda.map(dados => {
+              console.log(dados)
+              if(dados === ''){
+                console.log('Dados indefinidos')
+              }
+              return (
+              <Modal key={dados.codigo}
+                className="modal_consulta"
+                title={dados.codigo}
+                visible={this.state.modalConsulta}
+                onCancel={this.fecharModal}
+                footer={[
+                  <Button key="back" onClick={this.fecharModal}>
+                    <Icon type="left" />
+                    Retornar
+                  </Button>
+                ]}
+              >
+
+              <p>Código: {dados.codigo} </p>
+              <p>Médico: {dados.nomemedico} </p>
+              <p>Área: {dados.especializacao}</p>
+              <p>Horário: {dados.hora}</p>
+              <p>Status: {dados.status}</p>
+              </Modal>
+              )
+            })}
+
             <Row
               className="row_cards_home"
               gutter={48}
