@@ -46,6 +46,7 @@ class Dashboard extends Component {
     axios
       .get(`${API_ROOT}/api/recuperartoken`)
       .then(response => {
+        console.log(response)
         this.setState({
           dadosUsuario: {
             codigo: response.data.codigo,
@@ -83,6 +84,7 @@ class Dashboard extends Component {
     axios
       .get(`${API_ROOT}/api/paciente/agenda/${this.state.dadosUsuario.codigo}`)
       .then(response => {
+        console.log(response)
         this.setState({
           listaAgenda: response.data
         });
