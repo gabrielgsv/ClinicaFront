@@ -31,6 +31,7 @@ import axios from "axios";
 import moment from "moment";
 import { API_ROOT } from "../../../api-config";
 import { height } from "window-size";
+import _ from 'underscore'
 
 const Option = Select.Option;
 const FormItem = Form.Item;
@@ -67,7 +68,9 @@ class NovaConsulta extends Component {
       medicos: [],
       medicoSelecionado: [],
       medicosBuscados: [],
-      horas: [],
+      horariosPadroes: ['7','8','9','10','11','13','14','15','16','17'],
+      horarioslivres: [],
+      horariosConvertidos: [],
       agendamento: [],
       alergias: ""
     };
@@ -191,7 +194,6 @@ class NovaConsulta extends Component {
     axios
       .post(`${API_ROOT}/api/especializacao`, this.state.medico)
       .then(response => {
-        console.log(response.data);
         if (response.data.length > 0) {
           this.setState({
             loading: true,
@@ -361,15 +363,32 @@ class NovaConsulta extends Component {
       },
     }, () => {
       axios.get(`${API_ROOT}/api/medico/horariosdisponiveis/${this.state.agendamento.data}/${this.state.agendamento.codigomedico}`)
-        .then(response => {
+      .then(response => {
+        var horarios = response.data.map(h => {
+          return h.horario
+        })
           this.setState({
-            horas: response.data.horainicio
-          })
+            horarioslivres: horarios
         })
-        .catch(err => {
-          console.log(err)
-        })
+        this.verificandoHorarios()     
+      })
+      .catch(err => {
+        console.log(err)
+      })
     })
+  }
+
+  verificandoHorarios = () => {
+    const horariosP = this.state.horariosPadroes
+    const horariosF = this.state.horarioslivres
+
+    if (horariosF.length > 0){
+      this.setState({ horariosConvertidos: horariosF})
+      console.log(this.state.horariosConvertidos)
+    }else {
+      this.setState({ horariosConvertidos: horariosP})
+      console.log(this.state.horariosConvertidos)
+    }
   }
 
   render() {
@@ -512,17 +531,19 @@ class NovaConsulta extends Component {
           <Row type="flex" justify="center">
             <Col>
               <div style={{ marginBottom: "20px" }} className="data_picker">
-                <DatePicker size="large" onChange={this.buscarHoras} />
+                <DatePicker size="large" name="hora" onChange={this.buscarHoras} />
               </div>
             </Col>
           </Row>
           <Row type="flex" justify="center" >
             <div style={{ width: "400px", marginLeft: "30px" }}>
-              {this.state.horas.map(horas =>
-                <Col span={3} style={{ margin: "15px" }} >
-                  <div loading={this.state.loading} style={{ backgroundColor: "#42b6a5", height: "50px", borderRadius: "8px", color: "white", textAlign: "center", paddingTop: "13px" }}>{horas}00</div>
-                </Col>
-              )}
+            {this.state.horariosConvertidos.map((horario,key) => {
+              return (
+                <Col key={key} span={3} style={{ margin: "15px" }}>
+                <div style={{ cursor: "pointer" ,backgroundColor: "#42b6a5", height: "50px", borderRadius: "8px", color: "white", textAlign: "center", paddingTop: "13px" }}>{horario}:00</div>
+              </Col> 
+              )
+            })}
             </div>
           </Row>
           <div>
