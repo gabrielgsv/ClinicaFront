@@ -99,11 +99,12 @@ class Agenda extends Component {
     axios
       .get(`${API_ROOT}/api/paciente/painelagenda/${dateString}/${this.state.dadosUsuario.codigo}`)
       .then(response => {
-        console.log(response.data)
         this.setState({
-          listaAgenda: response.data
+         loading: true
         })
-        console.log(this.state.listaAgenda)
+        setTimeout(() => {
+          this.setState({ listaAgenda: response.data, loading: false})
+        }, 1000)
       })
       .catch(err => {
         console.log(err)
@@ -300,6 +301,7 @@ class Agenda extends Component {
                   <Table
                     locale={{ emptyText: 'Nenhum Agendamento Cadastrado' }}
                     columns={columns}
+                    loading={this.state.loading}
                     dataSource={this.state.listaAgenda}
                     rowKey={this.verificarAgenda}
                     size="middle" />
