@@ -147,10 +147,9 @@ class NovaConsulta extends Component {
 
   voltarData = () => {
     this.setState({
-      etapa: this.state.etapa - 1
-    });
-    this.setState({
-      statusData: false
+      etapa: this.state.etapa - 1,
+      statusData: false,
+      horariosConvertidos: []
     });
   };
 
@@ -237,18 +236,17 @@ class NovaConsulta extends Component {
       etapa: this.state.etapa + 1,
       statusMedico: true
     });
-  };
+  };  
 
-  onHorario = (time, timeString) => {
-    let horaInt = parseInt(timeString);
+  selecionarHorario = (hora) => {
     this.setState({
       agendamento: {
         ...this.state.agendamento,
-        horainicio: horaInt,
-        horafim: horaInt + 0.9
-      }
-    });
-  };
+        horario: hora
+      },
+    })
+    this.etapaHorario()
+  }
 
   buscarHorario = () => {
     this.setState({
@@ -302,6 +300,7 @@ class NovaConsulta extends Component {
   };
 
   etapaHorario = () => {
+    console.log(this.state.agendamento)
     notification.open({
       message: "Data e horario",
       description: "Selecionado com sucesso :)",
@@ -310,11 +309,11 @@ class NovaConsulta extends Component {
     this.setState({
       etapa: this.state.etapa + 1,
       statusData: true,
-      nomebutton: "Confirmar"
     });
   };
 
   confirmarConsulta = () => {
+    console.log(this.state.agendamento)
     axios
       .post(`${API_ROOT}/api/novaconsulta`, this.state.agendamento)
       .then(response => {
@@ -362,15 +361,16 @@ class NovaConsulta extends Component {
         loading: true
       },
     }, () => {
-      axios.get(`${API_ROOT}/api/medico/horariosdisponiveis/${this.state.agendamento.data}/${this.state.agendamento.codigomedico}`)
+      axios.get(`${API_ROOT}/api/medico/horariosindisponiveis/${this.state.agendamento.data}/${this.state.agendamento.codigomedico}`)
       .then(response => {
-        var horarios = response.data.map(h => {
-          return h.horario
-        })
+        console.log(response)
+          var horarios = response.data.map(h => {
+            return h.horario
+          })
           this.setState({
-            horarioslivres: horarios
-        })
-        this.verificandoHorarios()     
+              horarioslivres: horarios
+          })
+          this.verificandoHorarios()
       })
       .catch(err => {
         console.log(err)
@@ -382,12 +382,12 @@ class NovaConsulta extends Component {
     const horariosP = this.state.horariosPadroes
     const horariosF = this.state.horarioslivres
 
+    var comparaHorarios = _.difference(horariosP, horariosF)
+
     if (horariosF.length > 0){
-      this.setState({ horariosConvertidos: horariosF})
-      console.log(this.state.horariosConvertidos)
+      this.setState({ horariosConvertidos: comparaHorarios})
     }else {
       this.setState({ horariosConvertidos: horariosP})
-      console.log(this.state.horariosConvertidos)
     }
   }
 
@@ -439,7 +439,7 @@ class NovaConsulta extends Component {
             theme="outlined"
           />
           <span>
-            {this.state.agendamento.horainicio}
+            {this.state.agendamento.horario}
             HS
           </span>
         </div>
@@ -540,7 +540,7 @@ class NovaConsulta extends Component {
             {this.state.horariosConvertidos.map((horario,key) => {
               return (
                 <Col key={key} span={3} style={{ margin: "15px" }}>
-                <div style={{ cursor: "pointer" ,backgroundColor: "#42b6a5", height: "50px", borderRadius: "8px", color: "white", textAlign: "center", paddingTop: "13px" }}>{horario}:00</div>
+                <div onClick={() => this.selecionarHorario(horario)} style={{ cursor: "pointer" ,backgroundColor: "#42b6a5", height: "50px", borderRadius: "8px", color: "white", textAlign: "center", paddingTop: "13px" }}>{horario}:00</div>
               </Col> 
               )
             })}

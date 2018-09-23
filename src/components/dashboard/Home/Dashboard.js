@@ -100,14 +100,6 @@ class Dashboard extends Component {
     }
   };
 
-  onModalOpen = () => {
-    this.setState({ modalConsulta: true });
-  };
-
-  fecharModal = () => {
-    this.setState({ modalConsulta: false });
-  };
-
   verificarAgenda = () => {
     if (this.state.listaAgenda == null)
       return
@@ -134,37 +126,28 @@ class Dashboard extends Component {
       },
       {
         title: "Horário",
-        dataIndex: "hora"
+        render: hora => {
+          return (
+            <div>{hora.hora}:00</div>
+          );
+        }
       },
       {
         title: "Status",
         render: status => {
           return (
-            <Tooltip placement="right" title={status.status}>
+            <Tooltip placement="right" title={status.status === "a" ? a : (status.status === "f" ? f : c)}>
               <Icon
                 className={
                   status.status === "a"
-                    ? "icones_agenda_status_esperando"
-                    : "icones_agenda_status_finalizado"
-                }
-                type={status.status === "a" ? "loading" : "check"}
+                    ? "icones_agenda_status_esperando" :
+                    (status.status === "f" ? "icones_agenda_status_finalizado" : "icones_agenda_status_cancelado")}
+                type={status.status === "a" ? "loading" : (status.status === "f" ? "check" : "close")}
               />
             </Tooltip>
           );
         }
       },
-      {
-        title: "Ação",
-        render: acao => (
-          <Tooltip placement="right" title={verificar}>
-            <Button
-              type="primary"
-              icon="up-square"
-              onClick={this.onModalOpen}
-            />
-          </Tooltip>
-        )
-      }
     ];
 
     const data = [
@@ -216,23 +199,6 @@ class Dashboard extends Component {
             </Col>
           </Row>
           <Content className="conteudo_home">
-            <Modal
-              className="modal_consulta"
-              title={this.state.consulta.titulo}
-              visible={this.state.modalConsulta}
-              onCancel={this.fecharModal}
-              footer={[
-                <Button key="back" onClick={this.fecharModal}>
-                  <Icon type="left" />
-                  Retornar
-                </Button>
-              ]}
-            >
-              <p>Médico: {this.state.consulta.medico} </p>
-              <p>Área: {this.state.consulta.area}</p>
-              <p>Horário: {this.state.consulta.horario}</p>
-              <p>Status: {this.state.consulta.status}</p>
-            </Modal>
             <Row
               className="row_cards_home"
               gutter={48}

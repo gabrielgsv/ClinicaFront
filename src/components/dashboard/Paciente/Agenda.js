@@ -93,9 +93,11 @@ class Agenda extends Component {
   fecharModal = () => {
     this.setState({ modalConsulta: false });
   };
+
   onChange = (date, dateString) => {
+    console.log(dateString)
     axios
-      .get(`${API_ROOT}/api/paciente/agenda/${dateString}/${this.state.dadosUsuario.codigo}`)
+      .get(`${API_ROOT}/api/paciente/painelagenda/${dateString}/${this.state.dadosUsuario.codigo}`)
       .then(response => {
         console.log(response.data)
         this.setState({
@@ -134,28 +136,27 @@ class Agenda extends Component {
       },
       {
         title: "Horário",
-        dataIndex: "hora"
+        render: hora => {
+          return (
+            <div>{hora.hora}:00</div>
+          );
+        }
       },
       {
         title: "Status",
         render: status => {
           return (
-            <Tooltip placement="right" title={status.status}>
+            <Tooltip placement="right" title={status.status === "a" ? a : (status.status === "f" ? f : c)}>
               <Icon
                 className={
                   status.status === "a"
-                    ? "icones_agenda_status_esperando"
-                    : "icones_agenda_status_finalizado"
-                }
-                type={status.status === "a" ? "loading" : "check"}
+                    ? "icones_agenda_status_esperando" :
+                    (status.status === "f" ? "icones_agenda_status_finalizado" : "icones_agenda_status_cancelado")}
+                type={status.status === "a" ? "loading" : (status.status === "f" ? "check" : "close")}
               />
             </Tooltip>
           );
         }
-      },
-      {
-        title: "Ação",
-        dataIndex: "acao"
       }
     ];
     // const data = [
