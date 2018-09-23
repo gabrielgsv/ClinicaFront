@@ -84,10 +84,12 @@ class Dashboard extends Component {
     axios
       .get(`${API_ROOT}/api/paciente/agenda/${this.state.dadosUsuario.codigo}`)
       .then(response => {
-        console.log(response)
         this.setState({
-          listaAgenda: response.data
+          loading: true,
         });
+        setTimeout(() => {
+          this.setState({ listaAgenda: response.data, loading: false})
+        }, 1000)
       })
       .catch(err => {
         console.log(err);
@@ -251,6 +253,7 @@ class Dashboard extends Component {
                 <Table
                   locale={{ emptyText: 'Nenhum Agendamento Cadastrado' }}
                   columns={columns}
+                  loading={this.state.loading}
                   dataSource={this.state.listaAgenda}
                   rowKey={this.verificarAgenda}
                   size="middle"
