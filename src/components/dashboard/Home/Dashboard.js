@@ -27,18 +27,12 @@ class Dashboard extends Component {
     dadosUsuario: {
       codigo: "",
       nome: "",
-      role: ""
+      role: "",
+      totalAgendamentoDia: 0,
+      totalAgendamento: 0
     },
     tokenUser: "",
     redirect: false,
-    consulta: {
-      estadoModal: false,
-      titulo: "Consulta",
-      medico: "M1",
-      area: "A1",
-      horario: "H1",
-      status: "S1"
-    },
     listaAgenda: []
   };
 
@@ -81,8 +75,9 @@ class Dashboard extends Component {
   }
 
   agendaHoje = () => {
+    var roleRota = this.state.dadosUsuario.role == "m" ? "medico" : "paciente"
     axios
-      .get(`${API_ROOT}/api/paciente/agenda/${this.state.dadosUsuario.codigo}`)
+      .get(`${API_ROOT}/api/${roleRota}/agenda/${this.state.dadosUsuario.codigo}`)
       .then(response => {
         this.setState({
           loading: true,
@@ -94,6 +89,32 @@ class Dashboard extends Component {
       .catch(err => {
         console.log(err);
       });
+      axios
+        .get(`${API_ROOT}/api/${roleRota}/totalagendasdia/${this.state.dadosUsuario.codigo}`)
+        .then(response => {
+          this.setState({
+            dadosUsuario:{
+              ...this.state.dadosUsuario,
+              totalAgendamentoDia : response.data.agendamentosdia
+            }
+          })
+        })
+        .catch(err => {
+          console.log(err)
+        })
+      axios
+        .get(`${API_ROOT}/api/${roleRota}/totalagendamentos/${this.state.dadosUsuario.codigo}`)
+        .then(response => {
+          this.setState({
+            dadosUsuario: {
+              ...this.state.dadosUsuario,
+              totalAgendamento : response.data.totalagendamentos
+            }
+          })
+        })
+        .catch(err => {
+          console.log(err)
+        })
   };
 
   redirectLogin = () => {
@@ -113,8 +134,6 @@ class Dashboard extends Component {
     const a = <span>Aguardando</span>;
     const f = <span>Finalizado</span>;
     const c = <span>Cancelado</span>;
-    const verificar = <span>Verificar</span>;
-    const Agenda = this.state.listaAgenda;
     const abaSelecionada = this.props.abaLateral;
 
     const columns = [
@@ -151,30 +170,6 @@ class Dashboard extends Component {
         }
       },
     ];
-
-    const data = [
-      //   {
-      //     key: "1",
-      //     medico: Agenda.nomemedico,
-      //     area: Agenda.especializacao,
-      //     horario: Agenda.hora
-      //     status: (
-      //       <Tooltip placement="right" title={a}>
-      //         <Icon className="icones_agenda_status_esperando" type="loading" />
-      //       </Tooltip>
-      //     ),
-      //     acao: (
-      //       <Tooltip placement="right" title={verificar}>
-      //         <Button
-      //           type="primary"
-      //           icon="up-square"
-      //           onClick={this.onModalOpen}
-      //         />
-      //       </Tooltip>
-      //     )
-      //   }
-    ];
-
     return (
       <Layout>
         {this.redirectLogin()}
@@ -200,7 +195,7 @@ class Dashboard extends Component {
               <div className="descricao-pagina">Página Inicial</div>
             </Col>
           </Row>
-          <Content className="conteudo_home">
+          <Content  className="conteudo_home">
             <Row
               className="row_cards_home"
               gutter={48}
@@ -221,7 +216,7 @@ class Dashboard extends Component {
                   />
                 </Col>
                 <Col className="descricao_card" span={14}>
-                  <p className="valor_card">0</p>
+                  <p className="valor_card">{this.state.dadosUsuario.totalAgendamento}</p>
                   <p className="descricao_card"> Total </p>
                 </Col>
               </Card>
@@ -233,7 +228,7 @@ class Dashboard extends Component {
                   />
                 </Col>
                 <Col className="descricao_card" span={14}>
-                  <p className="valor_card">0</p>
+                  <p className="valor_card">{this.state.dadosUsuario.totalAgendamentoDia}</p>
                   <p className="descricao_card">Agendados</p>
                 </Col>
               </Card>

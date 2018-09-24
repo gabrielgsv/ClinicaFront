@@ -309,12 +309,19 @@ class NovaConsulta extends Component {
     this.setState({
       etapa: this.state.etapa + 1,
       statusData: true,
+      nomebutton: "Confirmar consulta"
     });
   };
 
   confirmarConsulta = () => {
-    console.log(this.state.agendamento)
-    axios
+    if(this.state.agendamento.motivo == null && this.state.agendamento.alergias == null){
+      notification.open({
+        message: "Campos vazios",
+        description: "Os campos não podem ficar vazios :(",
+        icon: <Icon type="meh-o" style={{ color: "red" }} />
+      });
+    } else {
+      axios
       .post(`${API_ROOT}/api/novaconsulta`, this.state.agendamento)
       .then(response => {
         console.log(response);
@@ -336,6 +343,7 @@ class NovaConsulta extends Component {
       .catch(err => {
         console.log(err);
       });
+    }
   };
 
   onModalOpen = () => {
