@@ -20,7 +20,6 @@ import ButtonGroup from "../../../../node_modules/antd/lib/button/button-group";
 import axios from "axios";
 import { API_ROOT } from "../../../api-config"
 
-
 const { Content, Sider } = Layout;
 class Agenda extends Component {
   state = {
@@ -40,7 +39,8 @@ class Agenda extends Component {
       status: "S1"
     },
     tokenUser: "",
-    redirect: false
+    redirect: false,
+    listaAgenda: []
   };
 
   componentDidMount = () => {
@@ -92,8 +92,31 @@ class Agenda extends Component {
     this.setState({ modalConsulta: false });
   };
   onChange = (date, dateString) => {
-    console.log(date, dateString);
-  };
+    axios
+      .get(`${API_ROOT}/api/medico/painelagenda/${dateString}/${this.state.dadosUsuario.codigo}`)
+      .then(response => {
+        console.log(response.data)
+        console.log(this.state.dadosUsuario.codigo)
+        this.setState({
+         loading: true
+        })
+        setTimeout(() => {
+          this.setState({ listaAgenda: response.data, loading: false})
+        }, 1000)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+      console.log(this.state.listaAgenda)
+  }
+
+  verificarAgenda = () => {
+    if (this.state.listaAgenda == null)
+      return
+    else
+      return "this.state.listaAgenda.codigo"
+  }
+
   render() {
     const abaSelecionada = this.props.abaLateral;
     const a = <span>Aguardando</span>;
@@ -105,24 +128,16 @@ class Agenda extends Component {
     const columns = [
       {
         title: "Paciente",
-        dataIndex: "paciente"
+        dataIndex: "nomepaciente"
       },
       {
-        title: "Idade",
-        dataIndex: "idade"
+        title: "Email",
+        dataIndex: "email"
       },
       {
-        title: "Horário",
-        dataIndex: "horario"
+        title: "Carteira",
+        dataIndex: "carteira"
       },
-      {
-        title: "Status",
-        dataIndex: "status"
-      },
-      {
-        title: "Ação",
-        dataIndex: "acao"
-      }
     ];
     const data = [
       {
@@ -218,7 +233,14 @@ class Agenda extends Component {
             >
               <Col span={24} sm={24} md={20} lg={14} xl={14}>
                 <div>
-                  <Table columns={columns} dataSource={data} size="middle" />
+                  <Table 
+                    locale={{ emptyText: 'Nenhum Agendamento Cadastrado' }}
+                    columns={columns} 
+                    loading={this.state.loading}
+                    dataSource={this.state.listaAgenda} 
+                    rowKey={this.verificarAgenda}
+                    size="middle"
+                  />
                 </div>
               </Col>
             </Row>
