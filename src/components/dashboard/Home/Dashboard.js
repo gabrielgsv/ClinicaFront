@@ -82,6 +82,7 @@ class Dashboard extends Component {
         this.setState({
           loading: true,
         });
+        console.log(response)
         setTimeout(() => {
           this.setState({ listaAgenda: response.data, loading: false})
         }, 1000)
@@ -138,16 +139,13 @@ class Dashboard extends Component {
 
     const columns = [
       {
-        title: "Médico",
-        dataIndex: "nomemedico"
-      },
-      {
-        title: "Área",
-        dataIndex: "especializacao"
+        title: this.state.dadosUsuario.role == "m" ? "PACIENTE" : "MÉDICO",
+        dataIndex: this.state.dadosUsuario.role == "m" ? "nomepaciente" : "nomemedico"
       },
       {
         title: "Horário",
         render: hora => {
+          console.log(hora)
           return (
             <div>{hora.hora}:00</div>
           );
