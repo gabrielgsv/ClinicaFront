@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import { Redirect } from "react-router";
 import {
   Modal,
@@ -19,7 +20,7 @@ import MenuTopo from "./MenuTopo";
 import ButtonGroup from "../../../../node_modules/antd/lib/button/button-group";
 import axios from "axios";
 import { API_ROOT } from "../../../api-config"
-
+import { API_ROOT } from "../../../api-config";
 
 const { Content, Sider } = Layout;
 class Agenda extends Component {
@@ -39,8 +40,11 @@ class Agenda extends Component {
       horario: "H1",
       status: "S1"
     },
+    data: "",
+    listaAgenda: [],
     tokenUser: "",
-    redirect: false
+    redirect: false,
+    listaAgenda: []
   };
 
   componentDidMount = () => {
@@ -71,7 +75,7 @@ class Agenda extends Component {
           Authorization: "Bearer " + this.state.tokenUser
         }
       })
-      .then(() => {})
+      .then(() => { })
       .catch(() => {
         this.setState({ redirect: true });
         this.redirectLogin();
@@ -91,9 +95,38 @@ class Agenda extends Component {
   fecharModal = () => {
     this.setState({ modalConsulta: false });
   };
+
   onChange = (date, dateString) => {
-    console.log(date, dateString);
-  };
+    axios
+      .get(`${API_ROOT}/api/medico/painelagenda/${dateString}/${this.state.dadosUsuario.codigo}`)
+      .then(response => {
+        console.log(response.data)
+        console.log(this.state.dadosUsuario.codigo)
+        console.log(dateString)
+    axios
+      .get(`${API_ROOT}/api/medico/painelagenda/${dateString}/${this.state.dadosUsuario.codigo}`)
+      .then(response => {
+        this.setState({
+         loading: true
+        })
+        setTimeout(() => {
+          this.setState({ listaAgenda: response.data, loading: false})
+        }, 1000)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+      ListarTodosOsAgendamentoProMedico
+      console.log(this.state.listaAgenda)
+  }
+
+  verificarAgenda = () => {
+    if (this.state.listaAgenda == null)
+      return
+    else
+      return "this.state.listaAgenda.codigo"
+  }
+
   render() {
     const abaSelecionada = this.props.abaLateral;
     const a = <span>Aguardando</span>;
@@ -105,24 +138,16 @@ class Agenda extends Component {
     const columns = [
       {
         title: "Paciente",
-        dataIndex: "paciente"
+        dataIndex: "nomepaciente"
       },
       {
-        title: "Idade",
-        dataIndex: "idade"
+        title: "Email",
+        dataIndex: "email"
       },
       {
-        title: "Horário",
-        dataIndex: "horario"
+        title: "Carteira",
+        dataIndex: "carteira"
       },
-      {
-        title: "Status",
-        dataIndex: "status"
-      },
-      {
-        title: "Ação",
-        dataIndex: "acao"
-      }
     ];
     const data = [
       {
@@ -142,15 +167,108 @@ class Agenda extends Component {
                 type="primary"
                 icon="up-square"
                 onClick={this.onModalOpen.bind(this)}
+
+        title: "Horário",
+        render: hora => {
+          return (
+            <div>{hora.hora}:00</div>
+          );
+        }
+      },
+      {
+        title: "Status",
+        render: status => {
+          return (
+            <Tooltip placement="right" title={status.status === "a" ? a : (status.status === "f" ? f : c)}>
+              <Icon
+                className={
+                  status.status === "a"
+                    ? "icones_agenda_status_esperando" :
+                    (status.status === "f" ? "icones_agenda_status_finalizado" : "icones_agenda_status_cancelado")}
+                type={status.status === "a" ? "loading" : (status.status === "f" ? "check" : "close")}
               />
             </Tooltip>
-            <Tooltip placement="bottom" title={cancelar}>
-              <Button type="primary" icon="close" />
-            </Tooltip>
-          </ButtonGroup>
-        )
+          );
+        }
       }
     ];
+    // const data = [
+    //   {
+    //     key: "1",
+    //     medico: "John Brown",
+    //     area: "Oftalmologista",
+    //     horario: "09:00",
+    //     status: (
+    //       <Tooltip placement="right" title={a}>
+    //         <Icon className="icones_agenda_status_esperando" type="loading" />
+    //       </Tooltip>
+    //     ),
+    //     acao: (
+    //       <ButtonGroup>
+    //         <Tooltip placement="bottom" title={verificar}>
+    //           <Button
+    //             type="primary"
+    //             icon="up-square"
+    //             onClick={this.onModalOpen.bind(this)}
+    //           />
+    //         </Tooltip>
+    //         <Tooltip placement="bottom" title={cancelar}>
+    //           <Button type="primary" icon="close" />
+    //         </Tooltip>
+    //       </ButtonGroup>
+    //     )
+    //   },
+    //   {
+    //     key: "2",
+    //     medico: "John Brown",
+    //     area: "Oftalmologista",
+    //     horario: "09:00",
+    //     status: (
+    //       <Tooltip placement="right" title={f}>
+    //         <Icon className="icones_agenda_status_finalizado" type="check" />
+    //       </Tooltip>
+    //     ),
+    //     acao: (
+    //       <ButtonGroup>
+    //         <Tooltip placement="bottom" title={verificar}>
+    //           <Button
+    //             type="primary"
+    //             icon="up-square"
+    //             onClick={this.onModalOpen.bind(this)}
+    //           />
+    //         </Tooltip>
+    //         <Tooltip placement="bottom" title={cancelar}>
+    //           <Button type="primary" icon="close" />
+    //         </Tooltip>
+    //       </ButtonGroup>
+    //     )
+    //   },
+    //   {
+    //     key: "3",
+    //     medico: "John Brown",
+    //     area: "Oftalmologista",
+    //     horario: "09:00",
+    //     status: (
+    //       <Tooltip placement="bottom" title={c}>
+    //         <Icon className="icones_agenda_status_cancelado" type="close" />
+    //       </Tooltip>
+    //     ),
+    //     acao: (
+    //       <ButtonGroup>
+    //         <Tooltip placement="bottom" title={verificar}>
+    //           <Button
+    //             type="primary"
+    //             icon="up-square"
+    //             onClick={this.onModalOpen.bind(this)}
+    //           />
+    //         </Tooltip>
+    //         <Tooltip placement="bottom" title={cancelar}>
+    //           <Button type="primary" icon="close" />
+    //         </Tooltip>
+    //       </ButtonGroup>
+    //     )
+    //   }
+    // ];
     return (
       <Layout>
         {this.redirectLogin()}
@@ -199,12 +317,6 @@ class Agenda extends Component {
               <p>Status: {this.state.consulta.status}</p>
             </Modal>
             <div className="data_picker">
-              <Button
-                type="primary"
-                shape="circle"
-                icon="search"
-                style={{ marginRight: "5px" }}
-              />
               <DatePicker onChange={this.onChange.bind(this)} />
             </div>
             <Row
@@ -218,7 +330,21 @@ class Agenda extends Component {
             >
               <Col span={24} sm={24} md={20} lg={14} xl={14}>
                 <div>
-                  <Table columns={columns} dataSource={data} size="middle" />
+                  <Table 
+                    locale={{ emptyText: 'Nenhum Agendamento Cadastrado' }}
+                    columns={columns} 
+                    loading={this.state.loading}
+                    dataSource={this.state.listaAgenda} 
+                    rowKey={this.verificarAgenda}
+                    size="middle"
+                  />
+                  <Table
+                    locale={{ emptyText: 'Nenhum Agendamento Cadastrado' }}
+                    columns={columns}
+                    loading={this.state.loading}
+                    dataSource={this.state.listaAgenda}
+                    rowKey={this.verificarAgenda}
+                    size="middle" />
                 </div>
               </Col>
             </Row>

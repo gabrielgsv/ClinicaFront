@@ -39,6 +39,8 @@ class Agenda extends Component {
       horario: "H1",
       status: "S1"
     },
+    data: "",
+    listaAgenda: [],
     tokenUser: "",
     redirect: false
   };
@@ -71,7 +73,7 @@ class Agenda extends Component {
           Authorization: "Bearer " + this.state.tokenUser
         }
       })
-      .then(() => {})
+      .then(() => { })
       .catch(() => {
         this.setState({ redirect: true });
         this.redirectLogin();
@@ -91,9 +93,31 @@ class Agenda extends Component {
   fecharModal = () => {
     this.setState({ modalConsulta: false });
   };
+
   onChange = (date, dateString) => {
-    console.log(date, dateString);
-  };
+    console.log(dateString)
+    axios
+      .get(`${API_ROOT}/api/paciente/painelagenda/${dateString}/${this.state.dadosUsuario.codigo}`)
+      .then(response => {
+        this.setState({
+         loading: true
+        })
+        setTimeout(() => {
+          this.setState({ listaAgenda: response.data, loading: false})
+        }, 1000)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }
+
+  verificarAgenda = () => {
+    if (this.state.listaAgenda == null)
+      return
+    else
+      return "this.state.listaAgenda.codigo"
+  }
+
   render() {
     const abaSelecionada = this.props.abaLateral;
     const a = <span>Aguardando</span>;
@@ -105,102 +129,114 @@ class Agenda extends Component {
     const columns = [
       {
         title: "Médico",
-        dataIndex: "medico"
+        dataIndex: "nomemedico"
       },
       {
         title: "Área",
-        dataIndex: "area"
+        dataIndex: "especializacao"
       },
       {
         title: "Horário",
-        dataIndex: "horario"
+        render: hora => {
+          return (
+            <div>{hora.hora}:00</div>
+          );
+        }
       },
       {
         title: "Status",
-        dataIndex: "status"
-      },
-      {
-        title: "Ação",
-        dataIndex: "acao"
+        render: status => {
+          return (
+            <Tooltip placement="right" title={status.status === "a" ? a : (status.status === "f" ? f : c)}>
+              <Icon
+                className={
+                  status.status === "a"
+                    ? "icones_agenda_status_esperando" :
+                    (status.status === "f" ? "icones_agenda_status_finalizado" : "icones_agenda_status_cancelado")}
+                type={status.status === "a" ? "loading" : (status.status === "f" ? "check" : "close")}
+              />
+            </Tooltip>
+          );
+        }
       }
     ];
-    const data = [
-      {
-        key: "1",
-        medico: "John Brown",
-        area: "Oftalmologista",
-        horario: "09:00",
-        status: (
-          <Tooltip placement="right" title={a}>
-            <Icon className="icones_agenda_status_esperando" type="loading" />
-          </Tooltip>
-        ),
-        acao: (
-          <ButtonGroup>
-            <Tooltip placement="bottom" title={verificar}>
-              <Button
-                type="primary"
-                icon="up-square"
-                onClick={this.onModalOpen.bind(this)}
-              />
-            </Tooltip>
-            <Tooltip placement="bottom" title={cancelar}>
-              <Button type="primary" icon="close" />
-            </Tooltip>
-          </ButtonGroup>
-        )
-      },
-      {
-        key: "2",
-        medico: "John Brown",
-        area: "Oftalmologista",
-        horario: "09:00",
-        status: (
-          <Tooltip placement="right" title={f}>
-            <Icon className="icones_agenda_status_finalizado" type="check" />
-          </Tooltip>
-        ),
-        acao: (
-          <ButtonGroup>
-            <Tooltip placement="bottom" title={verificar}>
-              <Button
-                type="primary"
-                icon="up-square"
-                onClick={this.onModalOpen.bind(this)}
-              />
-            </Tooltip>
-            <Tooltip placement="bottom" title={cancelar}>
-              <Button type="primary" icon="close" />
-            </Tooltip>
-          </ButtonGroup>
-        )
-      },
-      {
-        key: "3",
-        medico: "John Brown",
-        area: "Oftalmologista",
-        horario: "09:00",
-        status: (
-          <Tooltip placement="bottom" title={c}>
-            <Icon className="icones_agenda_status_cancelado" type="close" />
-          </Tooltip>
-        ),
-        acao: (
-          <ButtonGroup>
-            <Tooltip placement="bottom" title={verificar}>
-              <Button
-                type="primary"
-                icon="up-square"
-                onClick={this.onModalOpen.bind(this)}
-              />
-            </Tooltip>
-            <Tooltip placement="bottom" title={cancelar}>
-              <Button type="primary" icon="close" />
-            </Tooltip>
-          </ButtonGroup>
-        )
-      }
-    ];
+    // const data = [
+    //   {
+    //     key: "1",
+    //     medico: "John Brown",
+    //     area: "Oftalmologista",
+    //     horario: "09:00",
+    //     status: (
+    //       <Tooltip placement="right" title={a}>
+    //         <Icon className="icones_agenda_status_esperando" type="loading" />
+    //       </Tooltip>
+    //     ),
+    //     acao: (
+    //       <ButtonGroup>
+    //         <Tooltip placement="bottom" title={verificar}>
+    //           <Button
+    //             type="primary"
+    //             icon="up-square"
+    //             onClick={this.onModalOpen.bind(this)}
+    //           />
+    //         </Tooltip>
+    //         <Tooltip placement="bottom" title={cancelar}>
+    //           <Button type="primary" icon="close" />
+    //         </Tooltip>
+    //       </ButtonGroup>
+    //     )
+    //   },
+    //   {
+    //     key: "2",
+    //     medico: "John Brown",
+    //     area: "Oftalmologista",
+    //     horario: "09:00",
+    //     status: (
+    //       <Tooltip placement="right" title={f}>
+    //         <Icon className="icones_agenda_status_finalizado" type="check" />
+    //       </Tooltip>
+    //     ),
+    //     acao: (
+    //       <ButtonGroup>
+    //         <Tooltip placement="bottom" title={verificar}>
+    //           <Button
+    //             type="primary"
+    //             icon="up-square"
+    //             onClick={this.onModalOpen.bind(this)}
+    //           />
+    //         </Tooltip>
+    //         <Tooltip placement="bottom" title={cancelar}>
+    //           <Button type="primary" icon="close" />
+    //         </Tooltip>
+    //       </ButtonGroup>
+    //     )
+    //   },
+    //   {
+    //     key: "3",
+    //     medico: "John Brown",
+    //     area: "Oftalmologista",
+    //     horario: "09:00",
+    //     status: (
+    //       <Tooltip placement="bottom" title={c}>
+    //         <Icon className="icones_agenda_status_cancelado" type="close" />
+    //       </Tooltip>
+    //     ),
+    //     acao: (
+    //       <ButtonGroup>
+    //         <Tooltip placement="bottom" title={verificar}>
+    //           <Button
+    //             type="primary"
+    //             icon="up-square"
+    //             onClick={this.onModalOpen.bind(this)}
+    //           />
+    //         </Tooltip>
+    //         <Tooltip placement="bottom" title={cancelar}>
+    //           <Button type="primary" icon="close" />
+    //         </Tooltip>
+    //       </ButtonGroup>
+    //     )
+    //   }
+    // ];
     return (
       <Layout>
         {this.redirectLogin()}
@@ -262,7 +298,13 @@ class Agenda extends Component {
             >
               <Col span={24} sm={24} md={20} lg={14} xl={14}>
                 <div>
-                  <Table columns={columns} dataSource={data} size="middle" />
+                  <Table
+                    locale={{ emptyText: 'Nenhum Agendamento Cadastrado' }}
+                    columns={columns}
+                    loading={this.state.loading}
+                    dataSource={this.state.listaAgenda}
+                    rowKey={this.verificarAgenda}
+                    size="middle" />
                 </div>
               </Col>
             </Row>
