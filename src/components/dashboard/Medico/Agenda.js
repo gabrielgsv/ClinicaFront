@@ -19,6 +19,7 @@ import MenuLateral from "../MenuLateral/MenuLateral.js";
 import MenuTopo from "./MenuTopo";
 import ButtonGroup from "../../../../node_modules/antd/lib/button/button-group";
 import axios from "axios";
+import { API_ROOT } from "../../../api-config"
 import { API_ROOT } from "../../../api-config";
 
 const { Content, Sider } = Layout;
@@ -42,7 +43,8 @@ class Agenda extends Component {
     data: "",
     listaAgenda: [],
     tokenUser: "",
-    redirect: false
+    redirect: false,
+    listaAgenda: []
   };
 
   componentDidMount = () => {
@@ -95,7 +97,12 @@ class Agenda extends Component {
   };
 
   onChange = (date, dateString) => {
-    console.log(dateString)
+    axios
+      .get(`${API_ROOT}/api/medico/painelagenda/${dateString}/${this.state.dadosUsuario.codigo}`)
+      .then(response => {
+        console.log(response.data)
+        console.log(this.state.dadosUsuario.codigo)
+        console.log(dateString)
     axios
       .get(`${API_ROOT}/api/medico/painelagenda/${dateString}/${this.state.dadosUsuario.codigo}`)
       .then(response => {
@@ -109,6 +116,8 @@ class Agenda extends Component {
       .catch(err => {
         console.log(err)
       })
+      ListarTodosOsAgendamentoProMedico
+      console.log(this.state.listaAgenda)
   }
 
   verificarAgenda = () => {
@@ -136,6 +145,29 @@ class Agenda extends Component {
         dataIndex: "email"
       },
       {
+        title: "Carteira",
+        dataIndex: "carteira"
+      },
+    ];
+    const data = [
+      {
+        key: "1",
+        paciente: "John Brown",
+        idade: "20",
+        horario: "09:00",
+        status: (
+          <Tooltip placement="right" title={a}>
+            <Icon className="icones_agenda_status_esperando" type="loading" />
+          </Tooltip>
+        ),
+        acao: (
+          <ButtonGroup>
+            <Tooltip placement="bottom" title={verificar}>
+              <Button
+                type="primary"
+                icon="up-square"
+                onClick={this.onModalOpen.bind(this)}
+
         title: "Horário",
         render: hora => {
           return (
@@ -298,6 +330,14 @@ class Agenda extends Component {
             >
               <Col span={24} sm={24} md={20} lg={14} xl={14}>
                 <div>
+                  <Table 
+                    locale={{ emptyText: 'Nenhum Agendamento Cadastrado' }}
+                    columns={columns} 
+                    loading={this.state.loading}
+                    dataSource={this.state.listaAgenda} 
+                    rowKey={this.verificarAgenda}
+                    size="middle"
+                  />
                   <Table
                     locale={{ emptyText: 'Nenhum Agendamento Cadastrado' }}
                     columns={columns}

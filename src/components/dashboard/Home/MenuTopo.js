@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Layout, Avatar, Row, Col, Menu, Dropdown, Icon } from "antd";
+import { Link } from 'react-router-dom'
 
 import "../Dashboard.css";
 
@@ -17,13 +18,11 @@ class MenuTopo extends Component {
   render() {
     const menu = (
       <Menu onClick={this.handleMenuClick}>
-        <Menu.Item key="1">
-          <Icon type="profile" />
-          Configurações
-        </Menu.Item>
         <Menu.Item key="2">
-          <Icon type="export" />
-          Sair
+          <Link to="/login">
+            <Icon type="export" />
+              Sair
+          </Link>
         </Menu.Item>
       </Menu>
     );

@@ -371,7 +371,6 @@ class NovaConsulta extends Component {
     }, () => {
       axios.get(`${API_ROOT}/api/medico/horariosindisponiveis/${this.state.agendamento.data}/${this.state.agendamento.codigomedico}`)
       .then(response => {
-        console.log(response)
           var horarios = response.data.map(h => {
             return h.horario
           })
