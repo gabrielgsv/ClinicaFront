@@ -201,6 +201,34 @@ class Dashboard extends Component {
               <div className="descricao-pagina">Página Inicial</div>
             </Col>
           </Row>
+          <Content className="conteudo_home">
+            {Agenda.map(dados => {
+              console.log(dados)
+              if(dados === ''){
+                console.log('Dados indefinidos')
+              }
+              return (
+              <Modal key={dados.codigo}
+                className="modal_consulta"
+                title={dados.codigo}
+                visible={this.state.modalConsulta}
+                onCancel={this.fecharModal}
+                footer={[
+                  <Button key="back" onClick={this.fecharModal}>
+                    <Icon type="left" />
+                    Retornar
+                  </Button>
+                ]}
+              >
+
+              <p>Código: {dados.codigo} </p>
+              <p>Médico: {dados.nomemedico} </p>
+              <p>Área: {dados.especializacao}</p>
+              <p>Horário: {dados.hora}</p>
+              <p>Status: {dados.status}</p>
+              </Modal>
+              )
+            })}
           <Content  className="conteudo_home">
             <Row
               className="row_cards_home"
