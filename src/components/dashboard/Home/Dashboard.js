@@ -136,11 +136,19 @@ class Dashboard extends Component {
     const f = <span>Finalizado</span>;
     const c = <span>Cancelado</span>;
     const abaSelecionada = this.props.abaLateral;
-
+    const rota = this.state.dadosUsuario.role
     const columns = [
       {
+        ListarTodosOsAgendamentoProMedico
         title: this.state.dadosUsuario.role == "m" ? "PACIENTE" : "MÉDICO",
         dataIndex: this.state.dadosUsuario.role == "m" ? "nomepaciente" : "nomemedico"
+        title: rota == "p" ? "Médico" : "Paciente",
+        dataIndex: rota == "p" ? "nomemedico" : "nomepaciente"
+      },
+      {
+        title: rota == "p" ? "Área" : "Email",
+        dataIndex: rota == "p" ? "especializacao" : "email"
+        
       },
       {
         title: "Horário",
