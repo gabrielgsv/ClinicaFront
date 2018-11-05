@@ -302,3 +302,7 @@ div.labelNascimento {
   padding: 0 5 5 5;
   padding-left: 10px;
 }
+
+.btn_cancelarconsulta{
+  visibility: hidden;
+}
