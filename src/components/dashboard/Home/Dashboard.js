@@ -10,6 +10,7 @@ import {
   Button,
   Tooltip,
   Modal,
+  Popconfirm,
   notification
 } from "antd";
 
@@ -21,6 +22,7 @@ import axios from "axios";
 import { API_ROOT } from "../../../api-config";
 
 const { Content, Sider } = Layout;
+const ButtonGroup = Button.Group;
 
 class Dashboard extends Component {
   state = {
@@ -117,6 +119,24 @@ class Dashboard extends Component {
         })
   };
 
+  cancelarConsulta = (codigoagendamento) => {
+    axios
+        .post(`${API_ROOT}/api/cancelarconsulta/${codigoagendamento}`)
+        .then(response => {
+          this.agendaHoje()
+          setTimeout(() => {
+            notification.open({
+              message: "Cancelamento consulta",
+              description: "Consulta cancelada com sucesso !",
+              icon: <Icon type="check" style={{ color: "red" }} />
+            });
+          }, 1000)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+  }
+
   redirectLogin = () => {
     if (this.state.redirect) {
       return <Redirect to="/login" />;
@@ -157,7 +177,7 @@ class Dashboard extends Component {
         title: "Status",
         render: status => {
           return (
-            <Tooltip placement="right" title={status.status === "a" ? a : (status.status === "f" ? f : c)}>
+              <Tooltip placement="right" title={status.status === "a" ? a : (status.status === "f" ? f : c)}>
               <Icon
                 className={
                   status.status === "a"
@@ -167,6 +187,27 @@ class Dashboard extends Component {
               />
             </Tooltip>
           );
+        }
+      },
+      { 
+        title: "Cancelar",
+        render: (status,agendamento) => {
+          return (
+            <div className={status.status === "c" ? "btn_cancelarconsulta" : ""}>
+            <Tooltip placement="right" title="Cancelar consulta">
+              <Popconfirm
+                    placement="topLeft"
+                    title="Deseja realmente cancelar esta consulta ?"
+                    onConfirm={() => this.cancelarConsulta(agendamento.codigo)}
+                    okText="Sim"
+                    cancelText="Não">
+              <ButtonGroup>
+                <Button type="danger" icon="close" />
+              </ButtonGroup>
+            </Popconfirm>
+            </Tooltip>
+            </div>
+            )
         }
       },
     ];

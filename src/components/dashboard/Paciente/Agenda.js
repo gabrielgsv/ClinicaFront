@@ -10,6 +10,8 @@ import {
   Col,
   DatePicker,
   Button,
+  notification,
+  Popconfirm,
   Table
 } from "antd";
 
@@ -17,11 +19,12 @@ import "../Dashboard.css";
 
 import MenuLateral from "../MenuLateral/MenuLateral.js";
 import MenuTopo from "./MenuTopo";
-import ButtonGroup from "../../../../node_modules/antd/lib/button/button-group";
 import axios from "axios";
 import { API_ROOT } from "../../../api-config";
 
 const { Content, Sider } = Layout;
+const ButtonGroup = Button.Group;
+
 class Agenda extends Component {
   state = {
     dadosUsuario: {
@@ -39,6 +42,7 @@ class Agenda extends Component {
       horario: "H1",
       status: "S1"
     },
+    dataSelecionada: "",
     data: "",
     listaAgenda: [],
     tokenUser: "",
@@ -95,12 +99,12 @@ class Agenda extends Component {
   };
 
   onChange = (date, dateString) => {
-    console.log(dateString)
     axios
       .get(`${API_ROOT}/api/paciente/painelagenda/${dateString}/${this.state.dadosUsuario.codigo}`)
       .then(response => {
         this.setState({
-         loading: true
+         loading: true,
+         dataSelecionada: dateString
         })
         setTimeout(() => {
           this.setState({ listaAgenda: response.data, loading: false})
@@ -109,6 +113,24 @@ class Agenda extends Component {
       .catch(err => {
         console.log(err)
       })
+  }
+
+  cancelarConsulta = (codigoagendamento) => {
+    axios
+        .post(`${API_ROOT}/api/cancelarconsulta/${codigoagendamento}`)
+        .then(response => {
+          this.onChange(this.state.dataSelecionada,this.state.dataSelecionada)
+          setTimeout(() => {
+            notification.open({
+              message: "Cancelamento consulta",
+              description: "Consulta cancelada com sucesso !",
+              icon: <Icon type="check" style={{ color: "red" }} />
+            });
+          }, 1000)
+        })
+        .catch(err => {
+          console.log(err)
+        })
   }
 
   verificarAgenda = () => {
@@ -158,85 +180,29 @@ class Agenda extends Component {
             </Tooltip>
           );
         }
-      }
+      },
+      { 
+        title: "Cancelar",
+        render: (status,agendamento) => {
+          return (
+            <div className={status.status === "c" ? "btn_cancelarconsulta" : ""}>
+            <Tooltip placement="right" title="Cancelar consulta">
+              <Popconfirm
+                    placement="topLeft"
+                    title="Deseja realmente cancelar esta consulta ?"
+                    onConfirm={() => this.cancelarConsulta(agendamento.codigo)}
+                    okText="Sim"
+                    cancelText="Não">
+              <ButtonGroup>
+                <Button type="danger" icon="close" />
+              </ButtonGroup>
+            </Popconfirm>
+            </Tooltip>
+            </div>
+            )
+        }
+      },
     ];
-    // const data = [
-    //   {
-    //     key: "1",
-    //     medico: "John Brown",
-    //     area: "Oftalmologista",
-    //     horario: "09:00",
-    //     status: (
-    //       <Tooltip placement="right" title={a}>
-    //         <Icon className="icones_agenda_status_esperando" type="loading" />
-    //       </Tooltip>
-    //     ),
-    //     acao: (
-    //       <ButtonGroup>
-    //         <Tooltip placement="bottom" title={verificar}>
-    //           <Button
-    //             type="primary"
-    //             icon="up-square"
-    //             onClick={this.onModalOpen.bind(this)}
-    //           />
-    //         </Tooltip>
-    //         <Tooltip placement="bottom" title={cancelar}>
-    //           <Button type="primary" icon="close" />
-    //         </Tooltip>
-    //       </ButtonGroup>
-    //     )
-    //   },
-    //   {
-    //     key: "2",
-    //     medico: "John Brown",
-    //     area: "Oftalmologista",
-    //     horario: "09:00",
-    //     status: (
-    //       <Tooltip placement="right" title={f}>
-    //         <Icon className="icones_agenda_status_finalizado" type="check" />
-    //       </Tooltip>
-    //     ),
-    //     acao: (
-    //       <ButtonGroup>
-    //         <Tooltip placement="bottom" title={verificar}>
-    //           <Button
-    //             type="primary"
-    //             icon="up-square"
-    //             onClick={this.onModalOpen.bind(this)}
-    //           />
-    //         </Tooltip>
-    //         <Tooltip placement="bottom" title={cancelar}>
-    //           <Button type="primary" icon="close" />
-    //         </Tooltip>
-    //       </ButtonGroup>
-    //     )
-    //   },
-    //   {
-    //     key: "3",
-    //     medico: "John Brown",
-    //     area: "Oftalmologista",
-    //     horario: "09:00",
-    //     status: (
-    //       <Tooltip placement="bottom" title={c}>
-    //         <Icon className="icones_agenda_status_cancelado" type="close" />
-    //       </Tooltip>
-    //     ),
-    //     acao: (
-    //       <ButtonGroup>
-    //         <Tooltip placement="bottom" title={verificar}>
-    //           <Button
-    //             type="primary"
-    //             icon="up-square"
-    //             onClick={this.onModalOpen.bind(this)}
-    //           />
-    //         </Tooltip>
-    //         <Tooltip placement="bottom" title={cancelar}>
-    //           <Button type="primary" icon="close" />
-    //         </Tooltip>
-    //       </ButtonGroup>
-    //     )
-    //   }
-    // ];
     return (
       <Layout>
         {this.redirectLogin()}
